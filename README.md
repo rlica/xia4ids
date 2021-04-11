@@ -6,6 +6,7 @@
  * Khai Phan, University of Helsinky - CERN Summer Student Project 2020, khai.phan@tuni.fi.
 
 Initial version of the code: https://github.com/phandangkhai/pixie16ids.
+
 Parts of this code were modified from Pixie Acquisition and Analysis Software Suite (PAASS) https://github.com/pixie16/paass, which is licensed under the GNU GPL v. 3.0. In particular, some classes are modified and adapted from PAASS of branch 'dev' at https://github.com/pixie16/paass/tree/dev/Analysis/ScanLibraries.
 
 
