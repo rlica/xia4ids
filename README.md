@@ -43,7 +43,7 @@ Parts of this code were modified from Pixie Acquisition and Analysis Software Su
 See the 'etc' folder for some examples of different configuration and calibration files.
 
 
-#### ROOT format (new):
+#### ROOT format:
 
 The .root file will contain an event tree and singles histograms for all the selected inputs.  
 These are the following branches in the tree:
@@ -73,8 +73,23 @@ summed up in the corresponding leaf. A calibration file should be provided.
 4. There will be at least 'fold' detectors in the event. 
 
 
+#### GASPware format:
 
-####LIST format:
+1. The event will contain one Header and the detectors defined in the config file (index and detector type).
+2. Each detector will have at least three parameters:
+    * Energy
+    * HRT(High Resolution Time) - the time difference between each signal and the time centroid of the event
+    * LRT(Low Resolution Time)  - the time difference between the event and the reference signal (refType).
+    * If there is no reference defined (refType 0), the LRT parameter will be missing.
+3. 'pair-tac' will be treated as a detector with two extra parameters: the start and stop energies.   
+    * At 'Link' set the detector type that starts and stops the pair-tac (eg LaBr)
+    * At 'Start' and 'Stop' set the Index of the 'Link' that starts and stops the tac
+4. 'cs-tac' is set between each detector and the common stop/start.
+    * It will be considered as a parameter for the detector type set at 'Link'
+5. The header will contain the timestamp of the event in `run_unit` units.
+
+
+#### LIST format:
 
 1. The event consists of several entries, written as 32bit integers such as:
      * (proton-time)-(beta-energy)-(labr-energy)-(TAC_Beta-LaBr)
@@ -93,22 +108,7 @@ The timestamp difference entry will appear after the energy entry.
 
 6. To write the event time versus the reference signal (proton-time), set the referece at refType.
 
-####GASPware format:
-
-1. The event will contain one Header and the detectors defined in the config file (index and detector type).
-2. Each detector will have at least three parameters:
-    * Energy
-    * HRT(High Resolution Time) - the time difference between each signal and the time centroid of the event
-    * LRT(Low Resolution Time)  - the time difference between the event and the reference signal (refType).
-    * If there is no reference defined (refType 0), the LRT parameter will be missing.
-3. 'pair-tac' will be treated as a detector with two extra parameters: the start and stop energies.   
-    * At 'Link' set the detector type that starts and stops the pair-tac (eg LaBr)
-    * At 'Start' and 'Stop' set the Index of the 'Link' that starts and stops the tac
-4. 'cs-tac' is set between each detector and the common stop/start.
-    * It will be considered as a parameter for the detector type set at 'Link'
-5. The header will contain the timestamp of the event in `run_unit` units.
-
-####RATE format:
+#### RATE format:
 
 1. Set the input file as the second argument: `n4i [config_file] [input_file] [calibration_file]`.
 2. It will print the statistics for the last buffer in the input file. You will be asked to input the number
