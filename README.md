@@ -1,27 +1,27 @@
 # xia4ids
- XIA Pixie-16 .ldf data file converter into ROOT and GASPware format for IDS
+ XIA DGF Pixie-16 .ldf data file converter into ROOT and GASPware format for IDS
 
 ## Authors
-Razvan Lica, CERN - IFIN-HH, razvan.lica@cern.ch
-Khai Phan, University of Helsinky - Summer Student CERN Project, 2020
+Razvan Lica, CERN - IFIN-HH, razvan.lica@cern.ch.
+Khai Phan, University of Helsinky - Summer Student CERN Project, 2020.
 
-Initial version of the code: https://github.com/phandangkhai/pixie16ids
+Initial version of the code: https://github.com/phandangkhai/pixie16ids.
 Parts of this code were modified from Pixie Acquisition and Analysis Software Suite (PAASS) https://github.com/pixie16/paass, which is licensed under the GNU GPL v. 3.0. In particular, some classes are modified and adapted from PAASS of branch 'dev' at https://github.com/pixie16/paass/tree/dev/Analysis/ScanLibraries.
 
 =========
 
 ## Installation and running
  1. Download via github.com or using the command line  
- `git clone https://github.com/rlica/nutaq4ids`
+ `git clone https://github.com/rlica/xia4ids`
  2. Compile with `make clean && make`.
  3. Add in `$HOME/.bashrc` or `$HOME/.profile`       
- `PATH=$PATH:/your_path_here/nutaq4ids/bin/`
- 4. Run: `n4i config_file calibrationFile[optional]`
+ `PATH=$PATH:/your_path_here/xia4ids/bin/`
+ 4. Run: `xia4ids config_file calibrationFile[optional]`
  5. Enjoy!
 
 
 ## Getting Started
-### The 'nutaq4ids' converter requires a configuration file in which the user specifies:
+### The 'xia4ids' converter requires a configuration file in which the user specifies:
  * runName  = location of raw data including the name of the runs, not including the numbers
  * timegate = coincidence timegate
  * cs-tac, pair-tac, flagtype = specific detector types (only for GASPware - for ROOT set them to zero)
@@ -117,10 +117,3 @@ of blocks you want to be read from the end of the file.
 4. Use the `macros/n4i_rate.sh` script file in order to get automatically the last file in a folder.
 
 
-
-See the 'doc' folder for more detailed information.
-Special thanks to Nigel Warr for providing information and codes to read the Nutaq raw data.
-
-
-
- 
