@@ -29,7 +29,7 @@ HEADERS = \
 			HelperEnumerations.hpp \
 			LDFReader.h \
 			merge_sort.hh \
-			nutaq4ids.hh \
+			xia4ids.hh \
 			read_cal.hh \
 			read_config.hh \
 			read_ldf.hh \
@@ -47,7 +47,7 @@ HEADERS = \
 			SRC = \
 			EventFilters.cpp \
 			LDFReader.cpp \
-			nutaq4ids.cpp \
+			xia4ids.cpp \
 			Unpacker.cpp \
 			XiaData.cpp \
 			XiaDataListModeMask.cpp
@@ -69,11 +69,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADER_FILES)
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CC_FLAGS) $< -c -o $@
 
-run: $(TARGET)
-	$(TARGET)
-
-run_config: $(TARGET)
-	$(TARGET) config_gasp
 
 clean:
 	@rm $(OBJ_DIR) $(BIN_DIR) -R

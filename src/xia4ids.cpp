@@ -59,9 +59,9 @@ int main(int argc, char **argv)
     srand(time(0));
 
     printf("\n\t\t----------------------------------");
-    printf("\n\t\t         Nutaq Converter");
-    printf("\n\t\t           v10.02.2017  ");
-    printf("\n\t\thttps://github.com/rlica/nutaq4ids");
+    printf("\n\t\t    XIA DGF Pixie-16 Converter");
+    printf("\n\t\t           v11.04.2021  ");
+    printf("\n\t\t https://github.com/rlica/xia4ids");
     printf("\n\t\t----------------------------------");
     printf("\n\n");
 
