@@ -1,14 +1,15 @@
 # xia4ids
- XIA DGF Pixie-16 .ldf data file converter into ROOT and GASPware format for IDS
-
-## Authors
- * Razvan Lica, CERN - IFIN-HH, razvan.lica@cern.ch.
- * Khai Phan, University of Helsinky - CERN Summer Student Project 2020, khai.phan@tuni.fi.
+ XIA DGF Pixie-16 .ldf data file converter into ROOT and GASPware format for IDS (The IDS Collaboration https://isolde-ids.web.cern.ch/ ) 
 
 Initial version of the code: https://github.com/phandangkhai/pixie16ids.
 
 Parts of this code were modified from Pixie Acquisition and Analysis Software Suite (PAASS) https://github.com/pixie16/paass, which is licensed under the GNU GPL v. 3.0. In particular, some classes are modified and adapted from PAASS of branch 'dev' at https://github.com/pixie16/paass/tree/dev/Analysis/ScanLibraries.
 
+
+
+## Authors
+ * Razvan Lica, CERN - IFIN-HH, razvan.lica@cern.ch.
+ * Khai Phan, University of Helsinky - CERN Summer Student Project 2020, khai.phan@tuni.fi.
 
 ## Installation and running
  1. Download via github.com or using the command line  
