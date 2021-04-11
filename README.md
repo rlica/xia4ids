@@ -14,7 +14,7 @@ Parts of this code were modified from Pixie Acquisition and Analysis Software Su
 ## Installation and running
  1. Download via github.com or using the command line  
  `git clone https://github.com/rlica/xia4ids`
- 2. Compile with `make clean && make`.
+ 2. Compile with `make`.
  3. Add in `$HOME/.bashrc` or `$HOME/.profile`       
  `PATH=$PATH:/your_path_here/xia4ids/bin/`
  4. Run: `xia4ids config_file calibrationFile[optional]`
