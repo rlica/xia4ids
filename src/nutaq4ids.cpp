@@ -1,9 +1,9 @@
 /*
-Nutaq LyrTech to GASPware and ROOT converter
-R. Lica, 2014 - 2016
+XIA DGF Pixie-16 .ldf to GASPware and ROOT converter
+R. Lica, 2021
 razvan.lica@cern.ch
 
-https://github.com/rlica/nutaq4ids
+https://github.com/rlica/xia4ids
 
 */
 
@@ -129,19 +129,7 @@ int main(int argc, char **argv)
                 define_root();
             }
         }
-        ofstream myfile,another;
-        myfile.open("DataArray.txt");
-        another.open("Before.txt");
-        myfile  << "Time stamp"
-                << "\t  " << "Energy"
-                << "  " << "Module"
-                << "  " << "Channel"
-                << "\n\n";
-                        another  << "Time stamp"
-                << "\t  " << "Energy"
-                << "  " << "Module"
-                << "  " << "Channel"
-                << "\n\n";
+        
       
         if (rate == 1)
         { //Rate mode takes the input file as the second argument
@@ -228,23 +216,11 @@ int main(int argc, char **argv)
 
                     printProgress(progress);
 
-                    for (int k = 0; k < iData; k++) {
-                        another  << std::setw(8) << std::fixed << DataArray[k].time
-                                << std::setw(8) << DataArray[k].energy
-                                << std::setw(8) << DataArray[k].modnum
-                                << std::setw(8) << DataArray[k].chnum
-                                << "\n";
-                    } 
+                   
                     // Sorting the data chronologically.
                     MergeSort(DataArray, TempArray, 0, iData);
 
-                    for (int k = 0; k < iData; k++) {
-                        myfile  << std::setw(8) << std::fixed << DataArray[k].time
-                                << std::setw(8) << DataArray[k].energy
-                                << std::setw(8) << DataArray[k].modnum
-                                << std::setw(8) << DataArray[k].chnum
-                                << "\n";
-                    }                    
+                       
                     ////Looking for correlations
                     //if (corr > 0)
                     //{
@@ -309,7 +285,7 @@ int main(int argc, char **argv)
                     memset(stats, 0, sizeof(stats));
                 }                                   
             }
-        myfile.close();
+        
         if (root == 1 && corr == 0)
         {
             // Write everything
