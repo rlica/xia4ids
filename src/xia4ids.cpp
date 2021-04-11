@@ -24,7 +24,7 @@ https://github.com/rlica/xia4ids
 #include "TMath.h"
 #include "TROOT.h"
 
-#include "nutaq4ids.hh"
+#include "xia4ids.hh"
 #include "read_config.hh"
 #include "calibrate.hh"
 #include "read_cal.hh"
