@@ -1,3 +1,6 @@
+// Author: Khai Phan, TUNI-CERN Summer Student, 2020
+
+
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -34,7 +37,7 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
     std::vector<XiaData*> decodedList_; /// The main object that contains all the decoded quantities.
 
     unsigned long num_spills_recvd = 0; /// The total number of good spills received from either the input file or shared memory.
-    unsigned long max_num_spill; /// Limit of number of spills to read.
+    unsigned long max_num_spill = 100; /// Limit of number of spills to read.
     bool debug_mode = false; /// Set to true if the user wishes to display debug information.
     bool is_verbose = true; /// Set to true if the user wishes verbose information to be displayed.
 
@@ -74,7 +77,7 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
 
     //std::cout << "Enter the maximum number of spills to parse (type 0 to read all): ";
     //std::cin >> max_num_spill;
-    max_num_spill = 100;
+        
     if (max_num_spill != 0) {
         if (debug_mode)
             std::cout << "Maximum number of spills to read per cycle: " << max_num_spill << std::endl;
@@ -155,7 +158,7 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
     // data.Reset();
 
     while (true) {
-        if (!data.Read(&binary_file, (char*)data_, nBytes, 1000000, full_spill, bad_spill, debug_mode)) {
+        if (!data.Read(&binary_file, (char*)data_, nBytes, 0, full_spill, bad_spill, debug_mode)) {
             if (data.GetRetval() == 1) {
                 if (debug_mode) {
                     std::cout << "debug: Encountered single EOF buffer (end of run).\n";

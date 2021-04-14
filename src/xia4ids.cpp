@@ -38,7 +38,6 @@ https://github.com/rlica/xia4ids
 #include "write_gasp.hh"
 #include "write_stats.hh"
 #include "write_list.hh"
-#include "write_tree.hh"
 #include "write_time.hh"
 #include "read_ldf.hh"
 
@@ -154,10 +153,9 @@ int main(int argc, char **argv)
 
             start_clock = (double)clock();
 
-            // iData = 0, iEvt = 0;
-            // read_grain();
+            // Reading the .ldf file in portions of 500 spills
+            printf("Reading .ldf file %s \n", filename);
             iData = read_ldf(tmc, ldf, data, ldf_pos_index);
-            printf("Everything is ok, now ldf file is read!\n");
 
             // First and last time stamps for statistics.
             first_ts = DataArray[1].time;
@@ -166,25 +164,24 @@ int main(int argc, char **argv)
             if (root == 1)
             {
                 event_builder_tree();
-                //write_tree();
                 totEvt += iEvt;
                 // write_time();
             }
         }
         // Format: normal mode (not rate mode).
         else
-            for (runpart = 0; runpart < 2; runpart++)
+            for (runpart = 0; runpart < 1000; runpart++) // Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
             {
                 start_clock = (double)clock();
 				if (runpart == 0)
 					sprintf(filename, "%s%03d.ldf", runname, runnumber);
 				else
-					sprintf(filename, "%s%03d_%d.ldf", runname, runnumber, runpart);
+					sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
 
                 fp_in = fopen(filename, "rb");
                 if (!fp_in)
                 {
-                    fprintf(stderr, "Unable to open %s - %m\n", filename);
+                    fprintf(stderr, "File does not exist %s - %m\n", filename);
                     break;
                 }
 
@@ -197,17 +194,19 @@ int main(int argc, char **argv)
                 int barWidth = 70;
 
                 // Set file length then rewind to the beginning.
+                printf("Finding file length \n");
                 binary_file.open(ldf.GetName().c_str(), std::ios::binary);
                 binary_file.seekg(0, binary_file.end);
                 ldf.SetLength(binary_file.tellg());
                 binary_file.seekg(0, binary_file.beg);
                 binary_file.close();
+                printf("Done \n");
 
                 // Start of a cycle:
                 while (true) {
                     // Begin to parse ldf fielname.
                     // iData is now the last data index.
-                    memset(DataArray,0,memoryuse + 10000);
+                    memset(DataArray,0,memoryuse + 10000);  //Initializing the data array to zero
                     memset(TempArray,0,memoryuse + 10000);
 
                     iData = read_ldf(tmc, ldf, data, ldf_pos_index);
@@ -279,12 +278,14 @@ int main(int argc, char **argv)
 
                     fflush(stdout);
                 }
-                //Printing statistics for each run if not in correlation mode
-                if (corr == 0) {
-                    write_stats();
-                    memset(stats, 0, sizeof(stats));
-                }                                   
-            }
+                                 
+            } ////// End of Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
+
+        //Printing statistics for each run if not in correlation mode
+        if (corr == 0) {
+            write_stats();
+            memset(stats, 0, sizeof(stats));
+        }  
         
         if (root == 1 && corr == 0)
         {

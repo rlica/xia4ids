@@ -9,7 +9,7 @@ Parts of this code were modified from Pixie Acquisition and Analysis Software Su
 
 ## Authors
  * Razvan Lica, CERN - IFIN-HH, razvan.lica@cern.ch.
- * Khai Phan, University of Helsinky - CERN Summer Student Project 2020, khai.phan@tuni.fi.
+ * Khai Phan, Tampere University - CERN Summer Student Project 2020, khai.phan@tuni.fi.
 
 ## Installation and running
  1. Download via github.com or using the command line  

@@ -75,7 +75,7 @@ public:
     void SetRetVal(int inputval) { retval = inputval; }
     bool Read(std::ifstream* file_, char* data_, unsigned int& nBytes_,
         unsigned int max_bytes_, bool& full_spill,
-        bool& bad_spill, bool& debug_mode);
+        bool& bad_spill, bool& debug_mode);  //RL: max_bytes seems irelevant, should remove it in a future cleanup
 
     unsigned int GetBuffHead() { return buff_head; }
     unsigned int GetBuffSize() { return buff_size; }
