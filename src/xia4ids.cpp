@@ -88,6 +88,7 @@ int main(int argc, char **argv)
 
         totEvt = 0;
         tref = 0;
+        bool first_cycle = true; // to keep track of total run time
 
         // Open output file
         if ((gasp == 1 || list == 1 || root == 1) && corr == 0)
@@ -189,7 +190,6 @@ int main(int argc, char **argv)
                 LDF_file ldf(filename);
                 DATA_buffer data;
                 int ldf_pos_index = 0;
-                bool first_cycle = true;
                 float progress = 0.0;
                 int barWidth = 70;
 
@@ -204,7 +204,7 @@ int main(int argc, char **argv)
 
                 // Start of a cycle:
                 while (true) {
-                    // Begin to parse ldf fielname.
+                    // Begin to parse ldf filename.
                     // iData is now the last data index.
                     memset(DataArray,0,memoryuse + 10000);  //Initializing the data array to zero
                     memset(TempArray,0,memoryuse + 10000);
