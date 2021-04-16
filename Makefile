@@ -39,7 +39,6 @@ HEADERS = \
 			write_list.hh \
 			write_stats.hh \
 			write_time.hh \
-			write_tree.hh \
 			XiaData.h \
 			XiaListModeDataMask.h
 

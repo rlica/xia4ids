@@ -15,7 +15,7 @@ Parts of this code were modified from Pixie Acquisition and Analysis Software Su
  1. Download via github.com or using the command line  
  `git clone https://github.com/rlica/xia4ids`
  2. Compile with `make`.
- 3. Add in `$HOME/.bashrc` or `$HOME/.profile`       
+ 3. [optional] Add in `$HOME/.bashrc` or `$HOME/.profile`       
  `PATH=$PATH:/your_path_here/xia4ids/bin/`
  4. Run: `xia4ids config_file calibrationFile[optional]`
  5. Enjoy!
@@ -115,6 +115,6 @@ The timestamp difference entry will appear after the energy entry.
 2. It will print the statistics for the last buffer in the input file. You will be asked to input the number
 of blocks you want to be read from the end of the file. 
 3. You will be asked if you want to output the results in a ROOT file (useful for real-time yield measurement).
-4. Use the `macros/n4i_rate.sh` script file in order to get automatically the last file in a folder.
+4. Use the `macros/xia4ids_rate.sh` script file in order to get automatically the last file in a folder.
 
 

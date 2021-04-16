@@ -4,6 +4,8 @@ R. Lica, 2021
 razvan.lica@cern.ch
 
 https://github.com/rlica/xia4ids
+* 
+* First version: Khai Phan, TUNI - CERN Summer student 2020.
 
 */
 
@@ -154,7 +156,7 @@ int main(int argc, char **argv)
 
             start_clock = (double)clock();
 
-            // Reading the .ldf file in portions of 500 spills
+            // Reading the .ldf file in portions of 100 spills
             printf("Reading .ldf file %s \n", filename);
             iData = read_ldf(tmc, ldf, data, ldf_pos_index);
 
