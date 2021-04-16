@@ -267,14 +267,27 @@ int main(int argc, char **argv)
                         first_ts = DataArray[1].time;
                         first_cycle = false;
                     }
-                    if (data.GetRetval() == 2) { // last cycle.
-                        last_ts = DataArray[iData].time;
+                    
+                    // Khai: We only break this loop after the entire file is read and parsed.
+                    // if (data.GetRetval() == 2) { // last cycle.
+                    //    last_ts = DataArray[iData].time;
+                    //    std::cout << std::endl;
+                    //    std::cout << "First time stamp: " << first_ts << std::endl;
+                    //    std::cout << "Last time stamp: " << last_ts << std::endl; 
+                    //             
+                    //    break; 
+                    //}
+                    
+                    // We only break this loop when reaching the initially read file length. 
+                    // This allows for reading out incomplete files or files that are currently being written.
+                    if (ldf_pos_index <= file_length) {
+						last_ts = DataArray[iData].time;
                         std::cout << std::endl;
                         std::cout << "First time stamp: " << first_ts << std::endl;
                         std::cout << "Last time stamp: " << last_ts << std::endl; 
                                  
-                        break; // We only break this loop after the entire file is read and parsed.
-                    }
+                        break;
+					} 
 
                     fflush(stdout);
                 }
