@@ -1,6 +1,8 @@
 // Author: Khai Phan, TUNI-CERN Summer Student, 2020
+// Updated by Razvan Lica, 2021
 
 
+// word (1 byte) -> buffer (8194 words) -> chunk (Head + Dir + Data buffers)-> spill -> file -> run (one file or multiple 2Gb files)
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -11,8 +13,8 @@
 #include "Unpacker.h"
 #include "EventFilters.h"
 
-#define binary_file ldf.GetFile()
-#define file_length ldf.GetFileLength()
+#define binary_file ldf.GetFile() /// Main input file (binary file)
+#define file_length ldf.GetFileLength() /// Main input file length (in bytes).
 //#define curr_buffer data.GetCurrBuffer()
 //#define next_buffer data.GetNextBuffer()
 //#define buff_pos data.GetBuffPos()
@@ -30,14 +32,11 @@
 int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     DIR_buffer dir;
     HEAD_buffer head;
-    // DATA_buffer data;
-
-    // LDF_file ldf(filename);
-
+   
     std::vector<XiaData*> decodedList_; /// The main object that contains all the decoded quantities.
 
     unsigned long num_spills_recvd = 0; /// The total number of good spills received from either the input file or shared memory.
-    unsigned long max_num_spill = 100; /// Limit of number of spills to read.
+    unsigned long max_num_spill = memoryuse/40000; /// Limit of number of spills to read into the data array.
     bool debug_mode = false; /// Set to true if the user wishes to display debug information.
     bool is_verbose = true; /// Set to true if the user wishes verbose information to be displayed.
 

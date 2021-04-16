@@ -156,7 +156,6 @@ int main(int argc, char **argv)
 
             start_clock = (double)clock();
 
-            // Reading the .ldf file in portions of 100 spills
             printf("Reading .ldf file %s \n", filename);
             iData = read_ldf(tmc, ldf, data, ldf_pos_index);
 
@@ -184,7 +183,7 @@ int main(int argc, char **argv)
                 fp_in = fopen(filename, "rb");
                 if (!fp_in)
                 {
-                    fprintf(stderr, "File does not exist %s - %m\n", filename);
+                    // fprintf(stderr, "File does not exist %s - %m\n", filename);
                     break;
                 }
 
@@ -193,24 +192,24 @@ int main(int argc, char **argv)
                 DATA_buffer data;
                 int ldf_pos_index = 0;
                 float progress = 0.0;
-                int barWidth = 70;
+
 
                 // Set file length then rewind to the beginning.
-                printf("Finding file length \n");
                 binary_file.open(ldf.GetName().c_str(), std::ios::binary);
                 binary_file.seekg(0, binary_file.end);
                 ldf.SetLength(binary_file.tellg());
                 binary_file.seekg(0, binary_file.beg);
                 binary_file.close();
-                printf("Done \n");
+                printf("Filename:  %s \nFile size: %.2f MB \n", filename, float(file_length)/1048576);
 
-                // Start of a cycle:
+                // Start of a reading cycle:
                 while (true) {
                     // Begin to parse ldf filename.
                     // iData is now the last data index.
                     memset(DataArray,0,memoryuse + 10000);  //Initializing the data array to zero
                     memset(TempArray,0,memoryuse + 10000);
-
+                    
+                    // read_ldf will read a fixed number of spills from the binary file
                     iData = read_ldf(tmc, ldf, data, ldf_pos_index);
         
                     progress = float(ldf_pos_index) / float(file_length);
@@ -261,35 +260,38 @@ int main(int argc, char **argv)
                         printf(" %3d events written to %s ",
                             iEvt, outname);
                     }
-
                     printf("\t");
+
 
                     // Extract first and last time stamps for statistics.
                     if (first_cycle) { // first cycle.
                         first_ts = DataArray[1].time;
                         first_cycle = false;
                     }
+                    if (DataArray[iData].time > 0) last_ts = DataArray[iData].time;
                     
-                    // Khai: We only break this loop after the entire file is read and parsed.
-                    // if (data.GetRetval() == 2) { // last cycle.
-                    //    last_ts = DataArray[iData].time;
-                    //    std::cout << std::endl;
-                    //    std::cout << "First time stamp: " << first_ts << std::endl;
-                    //    std::cout << "Last time stamp: " << last_ts << std::endl; 
-                    //             
-                    //    break; 
-                    //}
-                    
-                    // We only break this loop when reaching the initially read file length. 
+                    // We break this loop after the entire file is read and parsed.
+                    if (data.GetRetval() == 2) { // last cycle.
+
+                       std::cout << std::endl;
+                       // std::cout << "First time stamp: " << first_ts << "\t Last time stamp: " << last_ts << std::endl;
+                       std::cout << "Finished reading complete file" << std::endl; 
+                                
+                       break;
+				   } 
+                                        
+                    // We also break this loop when reaching the initially read file length. 
                     // This allows for reading out incomplete files or files that are currently being written.
-                    if (ldf_pos_index <= file_length) {
-						last_ts = DataArray[iData].time;
+                    if (ldf_pos_index > file_length) {
+						
                         std::cout << std::endl;
-                        std::cout << "First time stamp: " << first_ts << std::endl;
-                        std::cout << "Last time stamp: " << last_ts << std::endl; 
+                        // std::cout << "First time stamp: " << first_ts << "\t Last time stamp: " << last_ts << std::endl;
+                        std::cout << "Finished reading incomplete file" << std::endl; 
                                  
                         break;
 					} 
+	
+					
 
                     fflush(stdout);
                 }
