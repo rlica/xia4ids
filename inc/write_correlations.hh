@@ -5,7 +5,7 @@ void write_correlations() {
   
   
   FILE *syncstat;
-  syncstat=fopen("sync-stat.txt", "wt");
+  syncstat=fopen("sync-stat.txt", "at");
   
   
   for (j=0; j<corr; j++) {

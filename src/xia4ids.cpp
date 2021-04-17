@@ -189,8 +189,8 @@ int main(int argc, char **argv)
                 // Start of a reading cycle:
                 while (true) {
 
-                    // iData is now the last data index.
-                    //iData=0, iEvt=0;
+                    // iData will be the last data index.
+                    iData=0, iEvt=0;
                     
                     memset(DataArray,0,memoryuse + 10000);  //Initializing the data array to zero
                     memset(TempArray,0,memoryuse + 10000);
@@ -214,30 +214,26 @@ int main(int argc, char **argv)
                       event_builder();
                       write_gasp();
                       totEvt += iEvt;
-                      printf(" %3d events written to %s ", iEvt, outname);
+                      printf(" %3d events written to %s ", totEvt, outname);
                       write_time(ldf_pos_index, file_length);
                     }
 
                     // Writing event lists
-                    else if (list == 1)
-                    {
+                    else if (list == 1) {
                       event_builder_list();
                       write_list();
                       totEvt += iEvt;
-                        printf(" %3d events written to %s ", iEvt, outname);
+                        printf(" %3d events written to %s ", totEvt, outname);
                         write_time(ldf_pos_index, file_length);
                     }
 
                     // Writing to a ROOT Tree
-                    else if (root == 1)
-                    {
+                    else if (root == 1) {
                         event_builder_tree();
                         totEvt += iEvt;
-                        printf(" %3d events written to %s ", iEvt, outname);
+                        printf(" %3d events written to %s ", totEvt, outname);
                         write_time(ldf_pos_index, file_length);
                     }
-                    printf("\t");
-
 
                     // Extract first and last time stamps for statistics.
                     if (first_cycle) { // first cycle.

@@ -37,7 +37,7 @@ void event_builder_tree() {
   
  
   
-  k=0;
+  k=0; //the index of the data array 0<k<iData
   int type=0, index=0, mult=0, e=0;
   uint64_t evt_start=0, lrt_ref=0, lrt_run=0;
   
