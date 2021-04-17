@@ -9,7 +9,7 @@ int calibrate(int module, int channel, int energy) {
 	  
     int i;
     
-    //srand(time(NULL)); this is very bad if doing it more than once per second.
+    //srand(time(NULL)); this is very bad if doing it more than once per second, therefore we only do it once, in the main()
 	
 	double random_number, prob;
 	double d_energy = 0;

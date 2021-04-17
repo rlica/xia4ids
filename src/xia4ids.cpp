@@ -1,11 +1,11 @@
 /*
 XIA DGF Pixie-16 .ldf to GASPware and ROOT converter
-R. Lica, 2021
-razvan.lica@cern.ch
+
+Authors:
+R. Lica, IFIN-HH - CERN, razvan.lica@cern.ch 2020-2021 
+K. Phan, TUNI - CERN Summer student 2020 (.ldf readout integration from PAAAS)
 
 https://github.com/rlica/xia4ids
-* 
-* First version: Khai Phan, TUNI - CERN Summer student 2020.
 
 */
 
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
     printf("\n\t\t----------------------------------");
     printf("\n\t\t    XIA DGF Pixie-16 Converter");
-    printf("\n\t\t           v11.04.2021  ");
+    printf("\n\t\t           v04.2021  ");
     printf("\n\t\t https://github.com/rlica/xia4ids");
     printf("\n\t\t----------------------------------");
     printf("\n\n");
@@ -64,13 +64,12 @@ int main(int argc, char **argv)
     DataArray = (struct data *)calloc(memoryuse + 10000, sizeof(struct data));
     TempArray = (struct data *)calloc(memoryuse + 10000, sizeof(struct data));
 
-    if (gasp == 1 || list == 1)
-    {
-        EventArray = (struct Event *)calloc(memoryuse + 10000, sizeof(struct Event));
-        GHeader = (struct GaspRecHeader *)calloc(1, sizeof(struct GaspRecHeader));
+    if (gasp == 1 || list == 1) {
+		EventArray = (struct Event *)calloc(memoryuse + 10000, sizeof(struct Event));
+		GHeader = (struct GaspRecHeader *)calloc(1, sizeof(struct GaspRecHeader));
     }
 
-    /////////////////////////////////////////////////////////////////// Reading run by run
+    // Reading run by run
     for (runnumber = runstart; runnumber <= runstop; runnumber++)
     {
 
@@ -120,7 +119,7 @@ int main(int argc, char **argv)
         
       
         if (rate == 1)
-        { //Rate mode takes the input file as the second argument
+        { //Ratemeter mode takes the input file as the second argument and analyzes only the last spill
             if (argc < 3)
             {
                 printf("Config file and input file required as arguments: ...$n4i [config_file_name] [input file] \n");
@@ -143,7 +142,7 @@ int main(int argc, char **argv)
             start_clock = (double)clock();
 
             printf("Reading .ldf file %s \n", filename);
-            iData = read_ldf(tmc, ldf, data, ldf_pos_index);
+            iData = read_ldf(ldf, data, ldf_pos_index);
 
             // First and last time stamps for statistics.
             first_ts = DataArray[1].time;
@@ -155,7 +154,7 @@ int main(int argc, char **argv)
                 totEvt += iEvt;
             }
         }
-        // Format: normal mode (not rate mode).
+        // Normal mode (not ratemeter mode).
         else
             for (runpart = 0; runpart < 1000; runpart++) // Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
             {
@@ -189,13 +188,15 @@ int main(int argc, char **argv)
 
                 // Start of a reading cycle:
                 while (true) {
-                    // Begin to parse ldf filename.
+
                     // iData is now the last data index.
+                    //iData=0, iEvt=0;
+                    
                     memset(DataArray,0,memoryuse + 10000);  //Initializing the data array to zero
                     memset(TempArray,0,memoryuse + 10000);
                     
                     // read_ldf() will read a fixed number of spills at once from the binary file
-                    iData = read_ldf(tmc, ldf, data, ldf_pos_index);
+                    iData = read_ldf(ldf, data, ldf_pos_index);
         
                     progress = float(ldf_pos_index) / float(file_length);
 
@@ -204,40 +205,31 @@ int main(int argc, char **argv)
                    
                     // Sorting the data chronologically.
                     MergeSort(DataArray, TempArray, 0, iData);
-
                        
-                    //Looking for correlations
-                    if (corr > 0) {
-                      correlations();
-                      continue;
+                    // Looking for correlations
+                    if (corr > 0) correlations();
+
+                    // Writing to GASPWare
+                    else if (gasp == 1) {
+                      event_builder();
+                      write_gasp();
+                      totEvt += iEvt;
+                      printf(" %3d events written to %s ", iEvt, outname);
+                      write_time(ldf_pos_index, file_length);
                     }
 
-                    //// Writing to GASPWare
-                    //else if (gasp == 1)
-                    //{
-                        //event_builder();
-                        //write_gasp();
-                        //totEvt += iEvt;
-
-                        //printf(" (%3d ev/blk) %9d events written to %s ",
-                            //iEvt / (current_block - prev_block + 1), totEvt, outname); //Fixed a very old bug -> add 1 to avoid division by zero (AAAAAAARGH)
-
-                        //// write_time();
-                    //}
-
-                    //// Writing event lists
-                    //else if (list == 1)
-                    //{
-                        //event_builder_list();
-                        //write_list();
-                        //totEvt += iEvt;
-                        //printf(" (%3d ev/blk) %9d events written to %s ",
-                            //iEvt / (current_block - prev_block + 1), totEvt, outname);
-                        //// write_time();
-                    //}
+                    // Writing event lists
+                    else if (list == 1)
+                    {
+                      event_builder_list();
+                      write_list();
+                      totEvt += iEvt;
+                        printf(" %3d events written to %s ", iEvt, outname);
+                        write_time(ldf_pos_index, file_length);
+                    }
 
                     // Writing to a ROOT Tree
-                    if (root == 1)
+                    else if (root == 1)
                     {
                         event_builder_tree();
                         totEvt += iEvt;

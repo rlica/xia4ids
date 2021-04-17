@@ -29,7 +29,7 @@
 #define ACTUAL_BUFF_SIZE 8194
 
 
-int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data, int& pos_index) {
+int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     DIR_buffer dir;
     HEAD_buffer head;
    
