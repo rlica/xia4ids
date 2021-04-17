@@ -1,13 +1,13 @@
 
-#define MAX_NUM_DET       70
+#define MAX_NUM_DET      300
 #define MAX_NUM_DETTYPES  30
 #define MAX_NUM_CHN       17
 #define MAX_NUM_MOD       15
 #define MAX_CAL            4
 #define memoryuse    4000000 // Size of the data array
 #define max_num_spill     20 // Limit of number of spills to read into the data array.
-#define reject_pileup      1 // Reject events marked as pileup (set to 0 to include them)
-#define reject_out		   1 // Reject events marked as out-of-range (set to 0 to include them)
+#define reject_pileup      1 // Reject events marked as pileup (set to 0 to treat them as good data)
+#define reject_out		   1 // Reject events marked as out-of-range (set to 0 to treat them as good data)
 
 
 ////if digitizer unit time = 10ns 
@@ -83,17 +83,17 @@ typedef struct GaspRecHeader {
   int config_coding[200][8]; //config_coding[lines][columns]
                                              
   
-  //                    ADC identifiers
-  //           tmc[modnum][chnum] = [type] 
-  //  ntmc[type][modnum][chnum] = [number]                         
-  
-  int  tmc                  [MAX_NUM_MOD][MAX_NUM_CHN],           
-      ntmc[MAX_NUM_DETTYPES][MAX_NUM_MOD][MAX_NUM_CHN],  
+  // ADC identifiers
+  //         tmc[modnum][chnum] = det type 
+  //  ntmc[type][modnum][chnum] = det number                         
+
+  int  tmc                  [MAX_NUM_MOD][MAX_NUM_CHN],   // detector type identifier w.r.t. the module and channel number          
+      ntmc[MAX_NUM_DETTYPES][MAX_NUM_MOD][MAX_NUM_CHN],   // detector number identifier 
      delay[MAX_NUM_MOD][MAX_NUM_CHN],        // timestamp delay to have the signals in sync
       link_type[MAX_NUM_DETTYPES],           // link_type[type_to_be_linked]
-     start[MAX_NUM_DET][MAX_NUM_DETTYPES],   //start and stop for the pair_tac
-     stop[MAX_NUM_DET][MAX_NUM_DETTYPES],    //   
-       lmc[MAX_NUM_MOD][MAX_NUM_CHN];        // line [mod][chan] -> returns the config line
+     start[MAX_NUM_DET][MAX_NUM_DETTYPES],   // start for the pair_tac
+     stop[MAX_NUM_DET][MAX_NUM_DETTYPES],    // stop for the pair_tac   
+       lmc[MAX_NUM_MOD][MAX_NUM_CHN];        // line [mod][chan] -> returns the index of the config line
   
   int corr, list, gasp, root, stat, rate, rate_root;
   int list_evSize, reference_link;
@@ -109,6 +109,8 @@ typedef struct GaspRecHeader {
   double calib[MAX_NUM_MOD][MAX_NUM_CHN][MAX_CAL];
  
   short int zero[10000];
+  double start_clock;
+  size_t nbytes=100;
   
   
   struct           Event *EventArray;
@@ -117,10 +119,10 @@ typedef struct GaspRecHeader {
   struct            data *TempArray; 
 
 
-
+// ROOT Variables and objects
 TFile *rootfile;
 TTree *tree;
-TH1F *hStats, *h[MAX_NUM_DETTYPES];
+TH1F *hStats, *h[MAX_NUM_DET];
 
 int   E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
       T_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
@@ -128,11 +130,8 @@ int   E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
       MULT_branch;
 ULong64_t  TIME_REF_branch;
 ULong64_t  TIME_RUN_branch;    
-char root_string[MAX_NUM_DETTYPES][100];
-
-    
-double start_clock;
-size_t nbytes=100;
+char root_string[MAX_NUM_DET][100];
+   
 char *comment_line;
-char comment_string[MAX_NUM_DETTYPES][100];
+char comment_string[MAX_NUM_DET][100];
 

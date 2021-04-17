@@ -6,8 +6,7 @@ int calibrate(int module, int channel, int energy) {
   
   
     if (have_cal == 0 || calib[module][channel][0] == 0) return energy;
-	
-  
+	  
     int i;
     
     //srand(time(NULL)); this is very bad if doing it more than once per second.

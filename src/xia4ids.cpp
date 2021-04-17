@@ -64,10 +64,6 @@ int main(int argc, char **argv)
     DataArray = (struct data *)calloc(memoryuse + 10000, sizeof(struct data));
     TempArray = (struct data *)calloc(memoryuse + 10000, sizeof(struct data));
 
-
-    //if (root == 1)
-        //TEventArray = (struct TEvent *)calloc(memoryuse + 10000, sizeof(struct TEvent));
-
     if (gasp == 1 || list == 1)
     {
         EventArray = (struct Event *)calloc(memoryuse + 10000, sizeof(struct Event));
@@ -210,12 +206,11 @@ int main(int argc, char **argv)
                     MergeSort(DataArray, TempArray, 0, iData);
 
                        
-                    ////Looking for correlations
-                    //if (corr > 0)
-                    //{
-                        //correlations();
-                        //continue;
-                    //}
+                    //Looking for correlations
+                    if (corr > 0) {
+                      correlations();
+                      continue;
+                    }
 
                     //// Writing to GASPWare
                     //else if (gasp == 1)
@@ -241,7 +236,7 @@ int main(int argc, char **argv)
                         //// write_time();
                     //}
 
-                    // Writing a ROOT Tree
+                    // Writing to a ROOT Tree
                     if (root == 1)
                     {
                         event_builder_tree();

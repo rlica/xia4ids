@@ -33,7 +33,7 @@ void define_root() {
   
   
   //define histograms for each input defined in the config file
-  //they are incremented in read_grain.hh
+  //they are incremented in read_ldf.hh
 
   hStats = new TH1F("hStats", "Statistics", detnum, 0, detnum);
   for (i = 0; i < detnum; i++)

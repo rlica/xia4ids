@@ -252,7 +252,9 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
     //myfile.open("Parsing results.txt");
     
     for (int i = 0; i < decodedList_.size(); i++) {
+        
         decodedEvent = decodedList_[i];
+        
         //if (i != 0) {
             //myfile << "\n \n";
         //}
@@ -264,11 +266,12 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
         //myfile << "Pileup flag: " << decodedEvent->IsPileup() << ".\n";
         //myfile << "Out-of-range (saturated) flag: " << decodedEvent->IsSaturated() << ".\n";
 
+
 		//Storing only data from ADCs defined in config
 		if (tmc[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()] == 0) continue;
 
 		// Remove pileup and out-of-range events if the flags are set
-		// stats[0=out-of-range, 1=pileup, 2=total][modnum][chnum]
+		// stats[0=out-of-range, 1=pileup, 2=good][modnum][chnum]
 		if (decodedEvent->IsSaturated()) {
 			stats[0][decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()]++;
 			if (reject_out) continue;
@@ -278,17 +281,29 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
 			if (reject_pileup) continue;
 		}
 		
-		
-				
-        // Transfer good signals to DataArray to build events.
-        
-        
+		// If we reach this stage, it means we have a good event, we store it
 		stats[2][decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()]++;
-        
-        DataArray[i].chnum = decodedEvent->GetChannelNumber();
+        				
+        // Transfer good signals to DataArray to build events.
+        DataArray[i].chnum	= decodedEvent->GetChannelNumber();
         DataArray[i].modnum = decodedEvent->GetModuleNumber();
         DataArray[i].energy = calibrate(decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetEnergy());
-        DataArray[i].time = decodedEvent->GetTime() + delay[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()];
+        DataArray[i].time	= decodedEvent->GetTime() + delay[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()];
+        
+        //Filling ROOT Histogram
+		if (root == 1 && corr == 0) {
+			int line = lmc[DataArray[i].modnum][DataArray[i].chnum];
+			hStats->AddBinContent(line, 1);
+			h[line]->Fill(DataArray[i].energy);
+		}
+		
+		//In correlation mode, we need to delay the stop (stop = secondCh,secondMod)
+		//The start is always the same reference and should not be used as stop
+		if (corr > 0)
+			for (j=0; j<corr; j++)
+				if (DataArray[i].chnum == secondCh[j] && DataArray[i].modnum == secondMod[j])
+					DataArray[i].time += CORR_DELAY*(int)corr_unit; 
+				
 
         
 
