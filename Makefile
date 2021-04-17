@@ -24,7 +24,6 @@ HEADERS = \
 			event_builder.hh \
 			event_builder_list.hh \
 			event_builder_tree.hh \
-			EventFilters.h \
 			Exceptions.h \
 			HelperEnumerations.hpp \
 			LDFReader.h \
@@ -44,7 +43,6 @@ HEADERS = \
 
 
 			SRC = \
-			EventFilters.cpp \
 			LDFReader.cpp \
 			xia4ids.cpp \
 			Unpacker.cpp \

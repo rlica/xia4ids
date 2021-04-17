@@ -43,16 +43,6 @@ https://github.com/rlica/xia4ids
 #include "write_time.hh"
 #include "read_ldf.hh"
 
-#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
-#define PBWIDTH 60
-
-void printProgress(double percentage) {
-    int val = (int) (percentage * 100);
-    int lpad = (int) (percentage * PBWIDTH);
-    int rpad = PBWIDTH - lpad;
-    printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
-    // fflush(stdout);
-}
 
 int main(int argc, char **argv)
 {
@@ -167,7 +157,6 @@ int main(int argc, char **argv)
             {
                 event_builder_tree();
                 totEvt += iEvt;
-                // write_time();
             }
         }
         // Format: normal mode (not rate mode).
@@ -209,7 +198,7 @@ int main(int argc, char **argv)
                     memset(DataArray,0,memoryuse + 10000);  //Initializing the data array to zero
                     memset(TempArray,0,memoryuse + 10000);
                     
-                    // read_ldf will read a fixed number of spills from the binary file
+                    // read_ldf() will read a fixed number of spills at once from the binary file
                     iData = read_ldf(tmc, ldf, data, ldf_pos_index);
         
                     progress = float(ldf_pos_index) / float(file_length);
@@ -257,8 +246,8 @@ int main(int argc, char **argv)
                     {
                         event_builder_tree();
                         totEvt += iEvt;
-                        printf(" %3d events written to %s ",
-                            iEvt, outname);
+                        printf(" %3d events written to %s ", iEvt, outname);
+                        write_time(ldf_pos_index, file_length);
                     }
                     printf("\t");
 

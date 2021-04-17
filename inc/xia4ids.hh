@@ -2,10 +2,12 @@
 #define MAX_NUM_DET       70
 #define MAX_NUM_DETTYPES  30
 #define MAX_NUM_CHN       17
-#define MAX_NUM_MOD       10
+#define MAX_NUM_MOD       15
 #define MAX_CAL            4
-#define MAX_ID        0x1000
-#define memoryuse    4000000
+#define memoryuse    4000000 // Size of the data array
+#define max_num_spill     20 // Limit of number of spills to read into the data array.
+#define reject_pileup      1 // Reject events marked as pileup (set to 0 to include them)
+#define reject_out		   1 // Reject events marked as out-of-range (set to 0 to include them)
 
 
 ////if digitizer unit time = 10ns 
@@ -13,7 +15,7 @@
 //#define MS 100000
 //#define  S 100000000
 
-//if digitizer unit time = 4ns
+//XIA DGF Pixie-16 250MHz - digitizer unit time = 4ns
 #define US 250
 #define MS 250000
 #define  S 250000000
@@ -22,28 +24,21 @@
 #define CORR_DELAY 4000
 #define RANGE      8000
 
-
+//progress bar specs
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||"  
+#define PBWIDTH 50
 
 typedef struct data { 
   uint64_t  time;
   short int energy;
   short int chnum;
-  short int modnum; 
+  short int modnum;
 } data;
 
 typedef struct Event {
   short int elem[MAX_NUM_DET];
   short int evSize;
 } Event;
-
-//typedef struct TEvent {
-  //int E[MAX_NUM_DETTYPES][MAX_NUM_DET];
-  //int T[MAX_NUM_DETTYPES][MAX_NUM_DET];
-  //int M[MAX_NUM_DETTYPES];
-  //int MULT;
-  //ULong64_t TIME_REF;
-  //ULong64_t TIME_RUN;
-//} TEvent;
 
 
 typedef struct GaspRecHeader {
@@ -79,7 +74,6 @@ typedef struct GaspRecHeader {
       fold;
       // rate_eof_blocks;
   uint32_t blocklen;
-  int full_size, current_block, prev_block; //in blocks
   char check_block_size,
        end_of_file;
   uint64_t tref, next_tref;     //tref is global, it starts initialized as zero,
@@ -95,11 +89,11 @@ typedef struct GaspRecHeader {
   
   int  tmc                  [MAX_NUM_MOD][MAX_NUM_CHN],           
       ntmc[MAX_NUM_DETTYPES][MAX_NUM_MOD][MAX_NUM_CHN],  
-     delay[MAX_NUM_MOD][MAX_NUM_CHN],                            // delay                     [modules][channels]
-      link_type[MAX_NUM_DETTYPES],                  // link_type[type_to_be_linked]
+     delay[MAX_NUM_MOD][MAX_NUM_CHN],        // timestamp delay to have the signals in sync
+      link_type[MAX_NUM_DETTYPES],           // link_type[type_to_be_linked]
      start[MAX_NUM_DET][MAX_NUM_DETTYPES],   //start and stop for the pair_tac
      stop[MAX_NUM_DET][MAX_NUM_DETTYPES],    //   
-       lmc[MAX_NUM_MOD][MAX_NUM_CHN];       // line [mod][chan] -> returns the config line
+       lmc[MAX_NUM_MOD][MAX_NUM_CHN];        // line [mod][chan] -> returns the config line
   
   int corr, list, gasp, root, stat, rate, rate_root;
   int list_evSize, reference_link;
@@ -109,16 +103,15 @@ typedef struct GaspRecHeader {
   long long int multiplier=1; //low resolution time multiplier
   //multiplier=1000;  // -> 1000*1ns = 1 microsecond  
   
-  int stats[3][MAX_NUM_MOD][MAX_NUM_CHN]; // stats[0=fail, 1=pileup, 2=total][modnum][chnum]
+  int stats[3][MAX_NUM_MOD][MAX_NUM_CHN]; // stats[0=out-of-range, 1=pileup, 2=good][modnum][chnum]
   
   int have_cal;
-  double calib[MAX_ID][MAX_CAL];
+  double calib[MAX_NUM_MOD][MAX_NUM_CHN][MAX_CAL];
  
   short int zero[10000];
   
   
   struct           Event *EventArray;
-  //struct          TEvent *TEventArray;
   struct   GaspRecHeader *GHeader; 
   struct            data *DataArray; 
   struct            data *TempArray; 

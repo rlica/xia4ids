@@ -1,4 +1,5 @@
 //   Reading parameters from config file
+//   Module and channel numbers starts from 0
 
 #include <iostream>
 
@@ -333,15 +334,6 @@ void read_config(int argc, char **argv) {
 }
 
 
-/*
------------------------------------------------------
-
-1) Numbering starts from 1
-
-2) If you don't want correlations, just delete them
-
--------------------------------------------------------
-*/
 
 
 

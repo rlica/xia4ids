@@ -1,8 +1,9 @@
 // Author: Khai Phan, TUNI-CERN Summer Student, 2020
 // Updated by Razvan Lica, 2021
 
-
+//.ldf file structure:
 // word (1 byte) -> buffer (8194 words) -> chunk (Head + Dir + Data buffers)-> spill -> file -> run (one file or multiple 2Gb files)
+
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -11,7 +12,6 @@
 #include "LDFReader.h"
 #include "XiaData.h"
 #include "Unpacker.h"
-#include "EventFilters.h"
 
 #define binary_file ldf.GetFile() /// Main input file (binary file)
 #define file_length ldf.GetFileLength() /// Main input file length (in bytes).
@@ -23,7 +23,7 @@
 #define DATA 1096040772 /// Physics data buffer
 #define DIR 542263620   /// "DIR "
 #define LDF_DIR_LENGTH 8192 /// Size of DIR buffer
-#define LDF_DATA_LENGTH 8193 // Maximum length of an ldf style DATA buffer.
+#define LDF_DATA_LENGTH 8193 /// Maximum length of an ldf style DATA buffer.
 #define ENDFILE 541478725 /// End of file buffer
 #define ENDBUFF 0xFFFFFFFF /// End of buffer marker
 #define ACTUAL_BUFF_SIZE 8194
@@ -36,7 +36,6 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
     std::vector<XiaData*> decodedList_; /// The main object that contains all the decoded quantities.
 
     unsigned long num_spills_recvd = 0; /// The total number of good spills received from either the input file or shared memory.
-    unsigned long max_num_spill = memoryuse/40000; /// Limit of number of spills to read into the data array.
     bool debug_mode = false; /// Set to true if the user wishes to display debug information.
     bool is_verbose = true; /// Set to true if the user wishes verbose information to be displayed.
 
@@ -243,14 +242,15 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
 
     delete[] data_;
 
-    // Exporting decoded info to DataArray, and print a text file result.
+
+
+
+	// Filter the Data Events and transfer the information into the DataArray 
+    
     XiaData* decodedEvent;
     //ofstream myfile;
     //myfile.open("Parsing results.txt");
-
-	
-    EventFilters filters(decodedList_, debug_mode, stats);
-    filters.ApplyFilters(tmc);
+    
     for (int i = 0; i < decodedList_.size(); i++) {
         decodedEvent = decodedList_[i];
         //if (i != 0) {
@@ -264,14 +264,39 @@ int read_ldf(int tmc[MAX_NUM_MOD][MAX_NUM_CHN], LDF_file& ldf, DATA_buffer& data
         //myfile << "Pileup flag: " << decodedEvent->IsPileup() << ".\n";
         //myfile << "Out-of-range (saturated) flag: " << decodedEvent->IsSaturated() << ".\n";
 
-        // Transfer info to DataArray to build events.
-        DataArray[i].energy = decodedEvent->GetEnergy();
-        DataArray[i].time = decodedEvent->GetTime();
+		//Storing only data from ADCs defined in config
+		if (tmc[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()] == 0) continue;
+
+		// Remove pileup and out-of-range events if the flags are set
+		// stats[0=out-of-range, 1=pileup, 2=total][modnum][chnum]
+		if (decodedEvent->IsSaturated()) {
+			stats[0][decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()]++;
+			if (reject_out) continue;
+		}
+		if (decodedEvent->IsPileup()) {
+			stats[1][decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()]++;
+			if (reject_pileup) continue;
+		}
+		
+		
+				
+        // Transfer good signals to DataArray to build events.
+        
+        
+		stats[2][decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()]++;
+        
         DataArray[i].chnum = decodedEvent->GetChannelNumber();
         DataArray[i].modnum = decodedEvent->GetModuleNumber();
+        DataArray[i].energy = calibrate(decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetEnergy());
+        DataArray[i].time = decodedEvent->GetTime() + delay[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()];
+
         
 
     }
+    
+    
+    
+    
     //myfile.close();
     for (i=0; i<decodedList_.size();i++){
         if (decodedList_[i])
