@@ -142,7 +142,7 @@ bool DATA_buffer::Read(std::ifstream* file_, char* data_, unsigned int& nBytes,
             // Check if this is a spill fragment.
             if (first_chunk) { // Check for starting read in middle of spill.
                 if (current_chunk_num != 0) {
-                    if (debug_mode) {
+                    if (true) {
                         std::cout
                             << "debug: starting read in middle of spill (chunk "
                             << current_chunk_num << " of "
@@ -159,7 +159,7 @@ bool DATA_buffer::Read(std::ifstream* file_, char* data_, unsigned int& nBytes,
             }
             // Total number of chunks informed by previous and current buffers mismatched.
             else if (total_num_chunks != prev_num_chunks) {
-                if (debug_mode) {
+                if (true) {
                     std::cout << "debug: skipped to new spill with "
                         << total_num_chunks
                         << " spill chunks without reading footer of old spill\n";
@@ -177,7 +177,7 @@ bool DATA_buffer::Read(std::ifstream* file_, char* data_, unsigned int& nBytes,
             // The chunk number jumped (more than 1).
             else if (current_chunk_num !=
                 prev_chunk_num + 1) { // Missing a spill chunk.
-                if (debug_mode) {
+                if (true) {
                     if (current_chunk_num == prev_chunk_num + 2) {
                         std::cout << "debug: missing single spill chunk ("
                             << prev_chunk_num + 1 << ")\n";
@@ -246,7 +246,7 @@ bool DATA_buffer::Read(std::ifstream* file_, char* data_, unsigned int& nBytes,
             else { // Normal spill chunk
                 unsigned int copied_bytes;
                 if (this_chunk_sizeB <= 12) {
-                    if (debug_mode) {
+                    if (true) {
                         std::cout << "debug: invalid number of bytes in chunk "
                             << current_chunk_num + 1 << " of "
                             << total_num_chunks << ", "
