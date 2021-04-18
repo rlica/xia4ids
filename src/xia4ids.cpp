@@ -61,8 +61,8 @@ int main(int argc, char **argv)
     // read_cal(argc, argv);
 
     //Allocating memory
-    DataArray = (struct data *)calloc(memoryuse + 10000, sizeof(struct data));
-    TempArray = (struct data *)calloc(memoryuse + 10000, sizeof(struct data));
+    DataArray = (struct dataStruct *)calloc(memoryuse + 10000, sizeof(struct dataStruct));
+    TempArray = (struct dataStruct *)calloc(memoryuse + 10000, sizeof(struct dataStruct));
 
     if (gasp == 1 || list == 1) {
 		EventArray = (struct Event *)calloc(memoryuse + 10000, sizeof(struct Event));

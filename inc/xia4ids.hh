@@ -28,12 +28,12 @@
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||"  
 #define PBWIDTH 50
 
-typedef struct data { 
+typedef struct dataStruct { 
   uint64_t  time;
   short int energy;
   short int chnum;
   short int modnum;
-} data;
+} dataStruct;
 
 typedef struct Event {
   short int elem[MAX_NUM_DET];
@@ -116,8 +116,8 @@ typedef struct GaspRecHeader {
   
   struct           Event *EventArray;
   struct   GaspRecHeader *GHeader; 
-  struct            data *DataArray; 
-  struct            data *TempArray; 
+  struct      dataStruct *DataArray; 
+  struct      dataStruct *TempArray; 
 
 
 // ROOT Variables and objects
