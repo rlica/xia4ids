@@ -10,8 +10,8 @@ void write_stats() {
     float tot_run_time = (last_ts - first_ts)/(float)S;
     
     printf("\n---------------------------------------------------------------------------------\n");
-    printf("RUN #%d    Recorded in: %.2f s        Bad/Good data chunks: %d/%d \n\n", runnumber, tot_run_time, run_missing_chunks, run_good_chunks);  
-    fprintf(outfile, "RUN #%d    Recorded in:        Bad/Good data chunks: %d/%d \n\n", runnumber, tot_run_time, run_missing_chunks, run_good_chunks);  
+    printf("RUN #%d    Recorded in: %.2f s              Bad/Good data chunks: %d/%d \n\n", runnumber, tot_run_time, run_missing_chunks, run_good_chunks);  
+    fprintf(outfile, "RUN #%d    Recorded in:              Bad/Good data chunks: %d/%d \n\n", runnumber, tot_run_time, run_missing_chunks, run_good_chunks);  
 
 	if (run_missing_chunks > 0)
 		printf("Warning: possible file integrity problem, for more information enable the 'debug' flag in xia4ids.hh\n\n");

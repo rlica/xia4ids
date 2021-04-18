@@ -79,7 +79,7 @@ void read_config(int argc, char **argv) {
     exit(0);
   }  
   if      ( strncmp(format_string, "stat", 4) == 0 )  stat = 1;
-  else if ( strncmp(format_string, "rate", 4) == 0 )  rate = 1;
+  else if ( strncmp(format_string, "rate", 4) == 0 )  { rate = 1; root = 1; }
   else if ( strncmp(format_string, "list", 4) == 0 )  list = 1;
   else if ( strncmp(format_string, "gasp", 4) == 0 )  gasp = 1;
   else if ( strncmp(format_string, "root", 4) == 0 )  root = 1;
@@ -313,20 +313,20 @@ void read_config(int argc, char **argv) {
   std::cin >> runstop;
   }
   
-  else {                                //Ratemeter mode
+  //else {                                //Ratemeter mode
   // printf("How many blocks (buffers) from the end of file you want to read? \t");
   // scanf("%d", &rate_eof_blocks);
   //rate_eof_blocks = 10;
-  printf("Write data in a ROOT file? (y/n) \t");
-  scanf("%s", rate_root_string);
-  if ( strncmp(rate_root_string, "y", 1) == 0 )      root = 1; 
-  else if ( strncmp(rate_root_string, "n", 1) == 0 ) root = 0;
-  else  {
-        printf("ERROR: Bad input\n");
-        exit(0);
-      }   
-    
-  }
+  //printf("Write data in a ROOT file? (y/n) \t");
+  //scanf("%s", rate_root_string);
+  //if ( strncmp(rate_root_string, "y", 1) == 0 )      root = 1; 
+  //else if ( strncmp(rate_root_string, "n", 1) == 0 ) root = 0;
+  //else  {
+  //      printf("ERROR: Bad input\n");
+  //      exit(0);
+  //    }   
+  //  
+  //}
   
   fclose(input_file);
 

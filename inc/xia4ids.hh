@@ -1,15 +1,16 @@
 
-#define MAX_NUM_DET      100
+#define MAX_NUM_DET      300
 #define MAX_NUM_DETTYPES  10
 #define MAX_NUM_CHN       17
 #define MAX_NUM_MOD       15
 #define MAX_CAL            4
-#define memoryuse    3000000 // Size of the data array
+#define memoryuse   10000000 // Size of the data array
 #define max_num_spill     20 // Limit of number of spills to read into the data array.
 #define reject_pileup      1 // Reject events marked as pileup (set to 0 to treat them as good data)
 #define reject_out		   1 // Reject events marked as out-of-range (set to 0 to treat them as good data)
 #define DEBUG		   false // Debug information from LDFReader.cpp
 #define VERBOSE			true // Display information from Unpacker.cpp
+#define RATE_EOF_MB		  10 // Size in MBytes to read from the end of file in ratemeter mode
 
 ////if digitizer unit time = 10ns 
 //#define US 100
@@ -74,7 +75,6 @@ typedef struct GaspRecHeader {
       reftype, 
       flagtype, flag,
       fold;
-      // rate_eof_blocks;
   uint32_t blocklen;
   char check_block_size,
        end_of_file;

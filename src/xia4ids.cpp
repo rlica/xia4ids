@@ -61,11 +61,11 @@ int main(int argc, char **argv)
     // read_cal(argc, argv);
 
     //Allocating memory
-    DataArray = (struct dataStruct *)calloc(memoryuse + 10000, sizeof(struct dataStruct));
-    TempArray = (struct dataStruct *)calloc(memoryuse + 10000, sizeof(struct dataStruct));
+    DataArray = (struct dataStruct *)calloc(memoryuse, sizeof(struct dataStruct));
+    TempArray = (struct dataStruct *)calloc(memoryuse, sizeof(struct dataStruct));
 
     if (gasp == 1 || list == 1) {
-		EventArray = (struct Event *)calloc(memoryuse + 10000, sizeof(struct Event));
+		EventArray = (struct Event *)calloc(memoryuse, sizeof(struct Event));
 		GHeader = (struct GaspRecHeader *)calloc(1, sizeof(struct GaspRecHeader));
     }
 
@@ -117,76 +117,63 @@ int main(int argc, char **argv)
                 }
                 define_root();
             }
-        }
+        }    
         
-      
-        if (rate == 1)
-        { //Ratemeter mode takes the input file as the second argument and analyzes only the last spill
-            if (argc < 3)
-            {
-                printf("Config file and input file required as arguments: ...$n4i [config_file_name] [input file] \n");
-                exit(0);
-            }
-            sprintf(filename, "%s", argv[2]);
-            fp_in = fopen(argv[2], "rb");
-            if (!fp_in)
-            {
-                fprintf(stderr, "Unable to open %s - %m\n", filename);
-                exit(0);
-            }
 
-            //Binary file object
-            LDF_file ldf(filename);
-            DATA_buffer data;
-            int ldf_pos_index = 0;
-
-
-            start_clock = (double)clock();
-
-            printf("Reading .ldf file %s \n", filename);
-            iData = read_ldf(ldf, data, ldf_pos_index);
-
-            // First and last time stamps for statistics.
-            first_ts = DataArray[1].time;
-            last_ts = DataArray[iData].time;
-
-            if (root == 1)
-            {
-                event_builder_tree();
-                totEvt += iEvt;
-            }
-        }
-        // Normal mode (not ratemeter mode).
-        else
-            for (runpart = 0; runpart < 1000; runpart++) // Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
-            {
+			
+				
+        
+        // Reading a run partition (a large run will be split into several files of 2.0 Gb each -> one run partition = one file)
+            for (runpart = 0; runpart < 1000; runpart++) { 
+            
                 start_clock = (double)clock();
-				if (runpart == 0)
-					sprintf(filename, "%s%03d.ldf", runname, runnumber);
-				else
-					sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
+                
+                //Running the code in rate mode, analysing only the last 10 MB from a file
+                if (rate == 1) {   
+					if (argc < 3) { //Rate mode takes the input file as the second argument
+						printf("Config file and input file required as arguments: ...$xia4ids config_file_name input file [calibration] \n");
+						exit(0);
+					}
+					
+					sprintf(filename, "%s", argv[2]);
+					fp_in = fopen(argv[2], "rb");
+					if (!fp_in) {
+						fprintf(stderr, "Unable to open %s - %m\n", filename);
+						exit(0);
+					}
+				}
+                
+                // Normal mode (not ratemeter mode).
+				else {
+					if (runpart == 0)
+						sprintf(filename, "%s%03d.ldf", runname, runnumber);
+					else
+						sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
 
-                fp_in = fopen(filename, "rb");
-                if (!fp_in)
-                {
-                    // fprintf(stderr, "File does not exist %s - %m\n", filename);
-                    break;
-                }
-
+					fp_in = fopen(filename, "rb");
+					if (!fp_in) {
+						// fprintf(stderr, "File does not exist %s - %m\n", filename);
+						break;
+					}
+				}
+				
+				
                 //Initializing the binary file object
                 LDF_file ldf(filename);
                 DATA_buffer data;
                 int ldf_pos_index = 0;
                 float progress = 0.0;
 
-
-                // Set file length then rewind to the beginning.
+                // Set file length
                 binary_file.open(ldf.GetName().c_str(), std::ios::binary);
                 binary_file.seekg(0, binary_file.end);
                 ldf.SetLength(binary_file.tellg());
                 binary_file.seekg(0, binary_file.beg);
                 binary_file.close();
                 printf("Filename:  %s \nFile size: %.2f MB \n", filename, float(file_length)/1048576);
+                
+                if (rate == 1) 
+					ldf_pos_index = int(file_length) - int (RATE_EOF_MB) * 1048576;
 
 
                 // Start of a reading cycle:
@@ -196,8 +183,8 @@ int main(int argc, char **argv)
                     iData=0, iEvt=0;
                     
                     //Initializing the data array to zero
-                    memset(DataArray,0,memoryuse + 10000);  
-                    memset(TempArray,0,memoryuse + 10000); //Used only when sorting 
+                    memset(DataArray,0,memoryuse);  
+                    memset(TempArray,0,memoryuse); //Used only when sorting 
                     
                     // read_ldf() will read a fixed number of spills at once from the binary file
                     iData = read_ldf(ldf, data, ldf_pos_index);
@@ -210,7 +197,8 @@ int main(int argc, char **argv)
                     MergeSort(DataArray, TempArray, 0, iData);
                        
                     // Looking for correlations
-                    if (corr > 0) correlations();
+                    if (corr > 0) 
+						correlations();
 
                     // Writing to GASPWare
                     else if (gasp == 1) {
