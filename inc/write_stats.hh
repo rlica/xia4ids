@@ -5,7 +5,7 @@ void write_stats() {
 // printing Stats for each Run
 
     FILE *outfile;
-    outfile=fopen(Form("n4i_Run%d.LOG",runnumber), "wt"); 
+    outfile=fopen(Form("log_Run%d.txt",runnumber), "wt"); 
 
     float tot_run_time = (last_ts - first_ts)/(float)S;
     
@@ -14,7 +14,7 @@ void write_stats() {
     fprintf(outfile, "RUN #%d    Recorded in:        Bad/Good data chunks: %d/%d \n\n", runnumber, tot_run_time, run_missing_chunks, run_good_chunks);  
 
 	if (run_missing_chunks > 0)
-		printf("Warning: file integrity problem, for more information enable the 'debug' flag in xia4ids.hh");
+		printf("Warning: possible file integrity problem, for more information enable the 'debug' flag in xia4ids.hh\n\n");
 		
     first_ts=0;
     printf("Module\tChannel        Good      Out-of-range   Pile-up   Rate(cps)\tComment\n\n");
