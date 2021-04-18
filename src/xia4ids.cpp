@@ -206,7 +206,7 @@ int main(int argc, char **argv)
 					// Displaying the progress bar
                     progress = float(ldf_pos_index) / float(file_length);
                     printProgress(progress);
-                   
+                                                           
                     // Sorting the data chronologically.
                     MergeSort(DataArray, TempArray, 0, iData);
                        
@@ -258,7 +258,11 @@ int main(int argc, char **argv)
                        std::cout << std::endl;
                        // std::cout << "First time stamp: " << first_ts << "\t Last time stamp: " << last_ts << std::endl;
                        std::cout << "Finished reading complete file" << std::endl; 
-                                
+                       
+                       // Checking file integrity 
+					   run_good_chunks += data.GetNumChunks(); 
+					   run_missing_chunks += data.GetNumMissing();
+                                                       
                        break;
 				   } 
                                         
@@ -269,7 +273,6 @@ int main(int argc, char **argv)
                         std::cout << std::endl;
                         // std::cout << "First time stamp: " << first_ts << "\t Last time stamp: " << last_ts << std::endl;
                         std::cout << "Finished reading incomplete file" << std::endl; 
-                                 
                         break;
 					} 
 	

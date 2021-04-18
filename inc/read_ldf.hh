@@ -156,7 +156,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     // data.Reset();
 
     while (true) {
-        if (!data.Read(&binary_file, (char*)data_, nBytes, 0, full_spill, bad_spill, debug_mode)) {         // Reading a spill from the binary file
+        if (!data.Read(&binary_file, (char*)data_, nBytes, 0, full_spill, bad_spill, debug_mode)) {     // Reading a spill from the binary file
 			
 			
             if (data.GetRetval() == 1) {
@@ -201,10 +201,6 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
             std::cout << "\r" << status.str();
         }
         
-        // Checking file integrity 
-		run_good_chunks += data.GetNumChunks(); 
-		run_missing_chunks += data.GetNumMissing();
-
 
         if (full_spill) {
             if (debug_mode) {
@@ -223,8 +219,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
             else {
                 std::cout << " WARNING: Spill has been flagged as corrupt, skipping (at word " << binary_file.tellg() / 4
                         << " in file)!\n";
-            }
-            
+            }        
 
         }
         else if (debug_mode) {
@@ -233,10 +228,10 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
             std::cout << "debug: Read up to word number " << binary_file.tellg() / 4 << " in input file\n";
             std::cout << std::endl << std::endl;
         }
-
+    
         num_spills_recvd++;
         pos_index = binary_file.tellg();
-    
+        
         if (debug_mode)
             std::cout << "Number of spills recorded (and parsed): " << num_spills_recvd << " spills" << std::endl;
         if (num_spills_recvd == max_num_spill && max_num_spill != 0) {                          // Reading until we reach the spill reading limit set in xia4ids.hh
@@ -316,6 +311,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
 
     }
     
+        
     binary_file.close();
                 
     return decodedList_.size();
