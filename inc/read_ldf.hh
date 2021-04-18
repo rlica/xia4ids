@@ -36,8 +36,8 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     std::vector<XiaData*> decodedList_; /// The main object that contains all the decoded signals.
 
     unsigned long num_spills_recvd = 0; /// The total number of good spills received from either the input file or shared memory.
-    bool debug_mode = false; /// Set to true if the user wishes to display debug information.
-    bool is_verbose = true; /// Set to true if the user wishes verbose information to be displayed.
+    bool debug_mode = DEBUG; /// Set to true if the user wishes to display debug information.
+    bool is_verbose = VERBOSE; /// Set to true if the user wishes verbose information to be displayed.
 
     // variables for reading dir buffer
     char* x = new char[2];

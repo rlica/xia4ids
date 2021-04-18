@@ -49,7 +49,7 @@ void event_builder_tree() {
   
   
   
-  while ( k < iData-1) {
+  while ( k < iData) {
     
     
     m=1;
@@ -87,7 +87,7 @@ void event_builder_tree() {
     
     //finding clusters of data
     //m = number of signals inside the cluster
-    while ( k+m < iData-1 && DataArray[k+m].time - DataArray[k].time < timegate ) {
+    while ( m <= detnum && k+m < iData && DataArray[k+m].time - DataArray[k].time < timegate ) {
 	     m++;
     
       
@@ -102,6 +102,7 @@ void event_builder_tree() {
                 //~ next_tref = (DataArray[l].time - tref);  
               //~ else next_tref = 0; 
           }
+         
     
     }
     
@@ -212,7 +213,7 @@ void event_builder_tree() {
             //NOTE: In ROOT numbering for leafs (index) starts from 0
 	  for(n=0; n<m; n++) {
 	    type =  tmc      [DataArray[k+n].modnum][DataArray[k+n].chnum];
-     index = ntmc[type][DataArray[k+n].modnum][DataArray[k+n].chnum];
+       index = ntmc[type][DataArray[k+n].modnum][DataArray[k+n].chnum];
             //~if (index != reftype) {
   
               //TEventArray[iEvt].E[type][index-1] = energy[type][index];

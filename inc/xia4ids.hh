@@ -1,14 +1,15 @@
 
-#define MAX_NUM_DET      300
+#define MAX_NUM_DET      100
 #define MAX_NUM_DETTYPES  10
 #define MAX_NUM_CHN       17
 #define MAX_NUM_MOD       15
 #define MAX_CAL            4
-#define memoryuse    4000000 // Size of the data array
+#define memoryuse    3000000 // Size of the data array
 #define max_num_spill     20 // Limit of number of spills to read into the data array.
 #define reject_pileup      1 // Reject events marked as pileup (set to 0 to treat them as good data)
 #define reject_out		   1 // Reject events marked as out-of-range (set to 0 to treat them as good data)
-
+#define DEBUG		   false // Debug information from LDFReader.cpp
+#define VERBOSE			true // Display information from Unpacker.cpp
 
 ////if digitizer unit time = 10ns 
 //#define US 100
@@ -36,7 +37,7 @@ typedef struct dataStruct {
 } dataStruct;
 
 typedef struct Event {
-  short int elem[MAX_NUM_DET];
+  int elem[MAX_NUM_DET];
   short int evSize;
 } Event;
 
@@ -52,14 +53,14 @@ typedef struct GaspRecHeader {
 
   float tot_run_time=0; //in seconds
   int   tot_sig_read;   //total number of signals read
-  int run_good_chunks, run_missing_chunks; // For checking run integrity in read_ldf.hh
+  int run_good_chunks, run_missing_chunks; // For checking run integrity
  
   FILE *fp_in; 
   FILE *fp_out;
-  char filename[300];
-  char outname[100];
-  char runname[200];
-  char ref_string[2], run_string[2], format_string[10], rate_root_string[1];
+  char filename[1000];
+  char outname[1000];
+  char runname[1000];
+  char ref_string[10], run_string[10], format_string[100], rate_root_string[1];
   unsigned long long int ref_unit, run_unit, corr_unit=1;
   int i, j, k, l, m, n, e, z,
       iData = 0, iEvt, totEvt,
@@ -81,7 +82,7 @@ typedef struct GaspRecHeader {
                                 //we change it only when encountering a new reference.
                                 //never reset it to zero !!! NO PROTONS LEFT BEHIND!!!
   uint64_t first_ts = 0, last_ts = 0;
-  int config_coding[200][8]; //config_coding[lines][columns]
+  int config_coding[1000][8]; //config_coding[lines][columns]
                                              
   
   // ADC identifiers

@@ -81,8 +81,7 @@ int main(int argc, char **argv)
         bool first_cycle = true; // to keep track of total run time
 
         // Open output file
-        if ((gasp == 1 || list == 1 || root == 1) && corr == 0)
-        {
+        if (corr == 0) {
 
             //GASPware format
             if (gasp == 1)
@@ -276,8 +275,6 @@ int main(int argc, char **argv)
                         break;
 					} 
 	
-					
-
                     fflush(stdout);
                 }
                                  
@@ -296,7 +293,8 @@ int main(int argc, char **argv)
         }  
 
 		// Writing correlation statistics for each run to file
-		if (corr > 0) write_correlations();
+		if (corr > 0)
+			write_correlations();
         
         std::cout << "Sorting completed!" << std::endl;
     

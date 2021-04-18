@@ -61,7 +61,7 @@ void event_builder() {
       
       //finding clusters of data
       //m = number of signals inside the cluster
-      while ( k+m < iData-1   &&
+      while ( m <= detnum && k+m < iData-1   &&
 	      DataArray[k+m].time - DataArray[k].time < timegate ) {
 	
 	//Fix the energy to be not higher than 16000:
