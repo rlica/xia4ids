@@ -75,6 +75,9 @@ int main(int argc, char **argv)
 
         totEvt = 0;
         tref = 0;
+        run_good_chunks = 0;
+        run_missing_chunks = 0;
+        
         bool first_cycle = true; // to keep track of total run time
 
         // Open output file
@@ -171,7 +174,7 @@ int main(int argc, char **argv)
                     break;
                 }
 
-                //Binary file object
+                //Initializing the binary file object
                 LDF_file ldf(filename);
                 DATA_buffer data;
                 int ldf_pos_index = 0;
@@ -186,22 +189,23 @@ int main(int argc, char **argv)
                 binary_file.close();
                 printf("Filename:  %s \nFile size: %.2f MB \n", filename, float(file_length)/1048576);
 
+
                 // Start of a reading cycle:
                 while (true) {
 
                     // iData will be the last data index.
                     iData=0, iEvt=0;
                     
-                    memset(DataArray,0,memoryuse + 10000);  //Initializing the data array to zero
-                    memset(TempArray,0,memoryuse + 10000);
+                    //Initializing the data array to zero
+                    memset(DataArray,0,memoryuse + 10000);  
+                    memset(TempArray,0,memoryuse + 10000); //Used only when sorting 
                     
                     // read_ldf() will read a fixed number of spills at once from the binary file
                     iData = read_ldf(ldf, data, ldf_pos_index);
-        
+					
+					// Displaying the progress bar
                     progress = float(ldf_pos_index) / float(file_length);
-
                     printProgress(progress);
-
                    
                     // Sorting the data chronologically.
                     MergeSort(DataArray, TempArray, 0, iData);
@@ -235,12 +239,18 @@ int main(int argc, char **argv)
                         write_time(ldf_pos_index, file_length);
                     }
 
+                    
                     // Extract first and last time stamps for statistics.
                     if (first_cycle) { // first cycle.
                         first_ts = DataArray[1].time;
                         first_cycle = false;
                     }
-                    if (DataArray[iData].time > 0) last_ts = DataArray[iData].time;
+                    
+                    if (DataArray[iData].time > 0)
+						last_ts = DataArray[iData].time;
+                    
+                    
+                    
                     
                     // We break this loop after the entire file is read and parsed.
                     if (data.GetRetval() == 2) { // last cycle.
@@ -268,29 +278,26 @@ int main(int argc, char **argv)
                     fflush(stdout);
                 }
                                  
-            } ////// End of Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
+            } // End of Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
 
-        //Printing statistics for each run if not in correlation mode
+        // Printing statistics for each run if not in correlation mode
+        // Writing the root file to disk
         if (corr == 0) {
             write_stats();
             memset(stats, 0, sizeof(stats));
+			if (root == 1) {
+				rootfile->Write();
+				rootfile->Save();
+				rootfile->Close();
+			}
         }  
+
+		// Writing correlation statistics for each run to file
+		if (corr > 0) write_correlations();
         
-        if (root == 1 && corr == 0)
-        {
-            // Write everything
-            rootfile->Write();
-            // Close output root file
-            rootfile->Save();
-            rootfile->Close();
-        }
-
-        std::cout << "Finish run!" << std::endl;
-    } ////////////////////////////////////////////////////////////// end of Run
-
-    //Writing correlation statistics for all runs to file
-    if (corr > 0)
-        write_correlations();
+        std::cout << "Sorting completed!" << std::endl;
+    
+    } // end of all Runs
 
     free(DataArray);
     free(TempArray);

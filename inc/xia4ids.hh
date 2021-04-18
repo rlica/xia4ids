@@ -52,6 +52,7 @@ typedef struct GaspRecHeader {
 
   float tot_run_time=0; //in seconds
   int   tot_sig_read;   //total number of signals read
+  int run_good_chunks, run_missing_chunks; // For checking run integrity in read_ldf.hh
  
   FILE *fp_in; 
   FILE *fp_out;

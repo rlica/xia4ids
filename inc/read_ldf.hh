@@ -33,7 +33,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     DIR_buffer dir;
     HEAD_buffer head;
    
-    std::vector<XiaData*> decodedList_; /// The main object that contains all the decoded quantities.
+    std::vector<XiaData*> decodedList_; /// The main object that contains all the decoded signals.
 
     unsigned long num_spills_recvd = 0; /// The total number of good spills received from either the input file or shared memory.
     bool debug_mode = false; /// Set to true if the user wishes to display debug information.
@@ -142,7 +142,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
 
 
 
-    // Start read ldf DATA buffers
+    // Start reading ldf DATA buffers
     if (pos_index == 0)
     {
         binary_file.seekg(65552, binary_file.beg); //10010 (hex) offset of DATA buffer type
@@ -156,7 +156,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     // data.Reset();
 
     while (true) {
-        if (!data.Read(&binary_file, (char*)data_, nBytes, 0, full_spill, bad_spill, debug_mode)) {
+        if (!data.Read(&binary_file, (char*)data_, nBytes, 0, full_spill, bad_spill, debug_mode)) {         // Reading a spill from the binary file
             if (data.GetRetval() == 1) {
                 if (debug_mode) {
                     std::cout << "debug: Encountered single EOF buffer (end of run).\n";
@@ -209,7 +209,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
             if (!bad_spill) {
                 if (debug_mode)
                     std::cout << "Spill is full and good!" << std::endl;
-                unpacker_.ReadSpill(decodedList_, data_, nBytes / 4, is_verbose, debug_mode);
+                unpacker_.ReadSpill(decodedList_, data_, nBytes / 4, is_verbose, debug_mode);   // Decoding data information from a good spill
                 //IdleTask();
                 if (debug_mode)
                     std::cout << std::endl << std::endl;
@@ -230,7 +230,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
         pos_index = binary_file.tellg();
         if (debug_mode)
             std::cout << "Number of spills recorded (and parsed): " << num_spills_recvd << " spills" << std::endl;
-        if (num_spills_recvd == max_num_spill && max_num_spill != 0) {
+        if (num_spills_recvd == max_num_spill && max_num_spill != 0) {                          // Reading until we reach the spill reading limit set in xia4ids.hh
             if (debug_mode)
                 std::cout << "Limit of number of events to record = " << max_num_spill << " has been reached!" << std::endl;
             pos_index = binary_file.tellg();
@@ -238,10 +238,14 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
             break;
         }
         
-    }
+    } // Finished reading 'max_num_spill' spills
 
     delete[] data_;
-
+    
+    
+    // Checking file integrity 
+    run_good_chunks += data.GetNumChunks(); 
+    run_missing_chunks += data.GetNumMissing();
 
 
 
@@ -302,22 +306,14 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
 		if (corr > 0)
 			for (j=0; j<corr; j++)
 				if (DataArray[i].chnum == secondCh[j] && DataArray[i].modnum == secondMod[j])
-					DataArray[i].time += CORR_DELAY*(int)corr_unit; 
-				
-
-        
+					DataArray[i].time += CORR_DELAY*(int)corr_unit;
+					
+		//Cleaning up
+		delete decodedList_[i]; 
+				      
 
     }
     
-    
-    
-    
-    //myfile.close();
-    for (i=0; i<decodedList_.size();i++){
-        if (decodedList_[i])
-            delete decodedList_[i];
-    }
-
     binary_file.close();
                 
     return decodedList_.size();

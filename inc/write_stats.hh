@@ -10,8 +10,8 @@ void write_stats() {
     float tot_run_time = (last_ts - first_ts)/(float)S;
     
     printf("\n---------------------------------------------------------------------------------\n");
-    printf("RUN #%d    Recorded in: %.2f s\n\n", runnumber, tot_run_time );  
-    fprintf(outfile, "RUN #%d    Recorded in: %.2f s\n\n", runnumber, tot_run_time );  
+    printf("RUN #%d    Recorded in: %.2f s        Bad/Good data chunks: %d/%d \n\n", runnumber, tot_run_time, run_missing_chunks, run_good_chunks);  
+    fprintf(outfile, "RUN #%d    Recorded in:        Bad/Good data chunks: %d/%d \n\n", runnumber, tot_run_time, run_missing_chunks, run_good_chunks);  
 
     first_ts=0;
     printf("Module\tChannel        Good      Out-of-range   Pile-up   Rate(cps)\tComment\n\n");
