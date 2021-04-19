@@ -192,6 +192,12 @@ int main(int argc, char **argv)
 					// Displaying the progress bar
                     progress = float(ldf_pos_index) / float(file_length);
                     printProgress(progress);
+                    
+                    // Writing statistics and skipping the event builder
+					if (stat == 1) {
+						write_time(ldf_pos_index, file_length);
+						continue;
+					}
                                                            
                     // Sorting the data chronologically.
                     MergeSort(DataArray, TempArray, 0, iData);
@@ -231,12 +237,10 @@ int main(int argc, char **argv)
                     if (first_cycle) { // first cycle.
                         first_ts = DataArray[1].time;
                         first_cycle = false;
-                    }
-                    
+                    }                    
                     if (DataArray[iData].time > 0)
 						last_ts = DataArray[iData].time;
-                    
-                    
+                              
                     
                     
                     // We break this loop after the entire file is read and parsed.
@@ -266,7 +270,7 @@ int main(int argc, char **argv)
                     fflush(stdout);
                 }
                                  
-            } // End of Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
+            } // End of Run partition
 
         // Printing statistics for each run if not in correlation mode
         // Writing the root file to disk
