@@ -218,18 +218,18 @@ int main(int argc, char **argv)
 
                     // Writing to GASPWare
                     else if (gasp == 1) {
-                      event_builder();
-                      write_gasp();
-                      totEvt += iEvt;
-                      printf(" %3d events written to %s ", totEvt, outname);
-                      write_time(ldf_pos_index, file_length);
+						event_builder();
+						write_gasp();
+						totEvt += iEvt;
+						printf(" %3d events written to %s ", totEvt, outname);
+						write_time(ldf_pos_index, file_length);
                     }
 
                     // Writing event lists
                     else if (list == 1) {
-                      event_builder_list();
-                      write_list();
-                      totEvt += iEvt;
+						event_builder_list();
+						write_list();
+						totEvt += iEvt;
                         printf(" %3d events written to %s ", totEvt, outname);
                         write_time(ldf_pos_index, file_length);
                     }
