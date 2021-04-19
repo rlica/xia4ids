@@ -72,7 +72,8 @@ int main(int argc, char **argv)
     // Reading run by run
     for (runnumber = runstart; runnumber <= runstop; runnumber++)
     {
-
+		
+		raw_list_size = 0, good_list_size = 0;
         totEvt = 0;
         tref = 0;
         run_good_chunks = 0;
@@ -163,6 +164,7 @@ int main(int argc, char **argv)
                 DATA_buffer data;
                 int ldf_pos_index = 0;
                 float progress = 0.0;
+                
 
                 // Set file length
                 binary_file.open(ldf.GetName().c_str(), std::ios::binary);
@@ -172,44 +174,44 @@ int main(int argc, char **argv)
                 binary_file.close();
                 printf("Filename:  %s \nFile size: %.2f MB \n", filename, float(file_length)/1048576);
                 
-                if (rate == 1) 
-					ldf_pos_index = int(file_length) - int (RATE_EOF_MB) * 1048576;
-
+                
 
                 // Start of a reading cycle:
-                while (true) {
+                while (data.GetRetval() != 2 && ldf_pos_index <= file_length) {
 
                     // iData will be the last data index.
                     iData=0, iEvt=0;
                     
                     //Initializing the data array to zero
-                    memset(DataArray,0,memoryuse);  
-                    memset(TempArray,0,memoryuse); //Used only when sorting 
+                    // memset(DataArray,0,memoryuse);  
+                    // memset(TempArray,0,memoryuse); //Used only when sorting 
                     
                     // read_ldf() will read a fixed number of spills at once from the binary file
-                    iData = read_ldf(ldf, data, ldf_pos_index);
+                    raw_list_size += read_ldf(ldf, data, ldf_pos_index);
+                    good_list_size += iData;
+                    
+                    if (rate == 1) ldf_pos_index = int(file_length) - int (RATE_EOF_MB) * 1048576;
 					
 					// Displaying the progress bar
                     progress = float(ldf_pos_index) / float(file_length);
                     printProgress(progress);
+                                        
+                                       
+                    // Sorting the data chronologically.
+                    MergeSort(DataArray, TempArray, 0, iData);
                     
-                    // Extract first and last time stamps for statistics.
+                    
+					// Extract first and last time stamps for statistics.
                     if (first_cycle) { // first cycle.
                         first_ts = DataArray[1].time;
                         first_cycle = false;
                     }                    
                     if (DataArray[iData].time > 0)
-						last_ts = DataArray[iData].time;
+						last_ts = DataArray[iData-1].time;
                     
-                    // Writing statistics and skipping the event builder
-					if (stat == 1) {
-						write_time(ldf_pos_index, file_length);
-						continue;
-					}
-                                                           
-                    // Sorting the data chronologically.
-                    MergeSort(DataArray, TempArray, 0, iData);
-                       
+                    // Writing statistics and skipping the event builder, will sort everything twice as fast
+					if (stat == 1) continue;
+					                       
                     // Looking for correlations
                     if (corr > 0) 
 						correlations();
@@ -240,11 +242,7 @@ int main(int argc, char **argv)
                         write_time(ldf_pos_index, file_length);
                     }
 
-                    
-
-                              
-                    
-                    
+                                        
                     // We break this loop after the entire file is read and parsed.
                     if (data.GetRetval() == 2) { // last cycle.
 

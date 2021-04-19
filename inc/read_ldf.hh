@@ -286,30 +286,34 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
 		stats[2][decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()]++;
         				
         // Transfer good signals to DataArray to build events.
-        DataArray[i].chnum	= decodedEvent->GetChannelNumber();
-        DataArray[i].modnum = decodedEvent->GetModuleNumber();
-        DataArray[i].energy = calibrate(decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetEnergy());
-        DataArray[i].time	= decodedEvent->GetTime() + delay[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()];
+        DataArray[iData].chnum	= decodedEvent->GetChannelNumber();
+        DataArray[iData].modnum = decodedEvent->GetModuleNumber();
+        DataArray[iData].energy = calibrate(decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetEnergy());
+        DataArray[iData].time	= decodedEvent->GetTime() + delay[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()];
         
         //Filling ROOT Histogram
 		if (root == 1 && corr == 0) {
-			int line = lmc[DataArray[i].modnum][DataArray[i].chnum];
+			int line = lmc[DataArray[iData].modnum][DataArray[iData].chnum];
 			hStats->AddBinContent(line, 1);
-			h[line]->Fill(DataArray[i].energy);
+			h[line]->Fill(DataArray[iData].energy);
 		}
 		
 		//In correlation mode, we need to delay the stop (stop = secondCh,secondMod)
 		//The start is always the same reference and should not be used as stop
 		if (corr > 0)
 			for (j=0; j<corr; j++)
-				if (DataArray[i].chnum == secondCh[j] && DataArray[i].modnum == secondMod[j])
-					DataArray[i].time += CORR_DELAY*(int)corr_unit;
+				if (DataArray[iData].chnum == secondCh[j] && DataArray[iData].modnum == secondMod[j])
+					DataArray[iData].time += CORR_DELAY*(int)corr_unit;
 					
-		//Cleaning up
-		delete decodedList_[i]; 
+		iData++;
+		 
 				      
 
     }
+    
+    //Cleaning up
+    for (int i = 0; i < decodedList_.size(); i++)
+		delete decodedList_[i];
     
         
     binary_file.close();

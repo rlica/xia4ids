@@ -78,11 +78,11 @@ void read_config(int argc, char **argv) {
     printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stats, root}\n",  argv[1]);
     exit(0);
   }  
-  if      ( strncmp(format_string, "stat", 4) == 0 )  stat = 1;
-  else if ( strncmp(format_string, "rate", 4) == 0 )  { rate = 1; root = 1; }
-  else if ( strncmp(format_string, "list", 4) == 0 )  list = 1;
-  else if ( strncmp(format_string, "gasp", 4) == 0 )  gasp = 1;
-  else if ( strncmp(format_string, "root", 4) == 0 )  root = 1;
+  if      ( strncmp(format_string, "stat", 4) == 0 )  { stat = 1; printf("Running in STAT mode\n"); }
+  else if ( strncmp(format_string, "rate", 4) == 0 )  { rate = 1; root = 1;  printf("Running in RATE mode\n"); }
+  else if ( strncmp(format_string, "list", 4) == 0 )  { list = 1; printf("Running in LIST mode\n"); }
+  else if ( strncmp(format_string, "gasp", 4) == 0 )  { gasp = 1; printf("Running in GASP mode\n"); }
+  else if ( strncmp(format_string, "root", 4) == 0 )  { root = 1; printf("Running in ROOT mode\n"); }
   else {
     printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stats, root}\n",  argv[1]);
     exit(0);
