@@ -193,6 +193,14 @@ int main(int argc, char **argv)
                     progress = float(ldf_pos_index) / float(file_length);
                     printProgress(progress);
                     
+                    // Extract first and last time stamps for statistics.
+                    if (first_cycle) { // first cycle.
+                        first_ts = DataArray[1].time;
+                        first_cycle = false;
+                    }                    
+                    if (DataArray[iData].time > 0)
+						last_ts = DataArray[iData].time;
+                    
                     // Writing statistics and skipping the event builder
 					if (stat == 1) {
 						write_time(ldf_pos_index, file_length);
@@ -233,13 +241,7 @@ int main(int argc, char **argv)
                     }
 
                     
-                    // Extract first and last time stamps for statistics.
-                    if (first_cycle) { // first cycle.
-                        first_ts = DataArray[1].time;
-                        first_cycle = false;
-                    }                    
-                    if (DataArray[iData].time > 0)
-						last_ts = DataArray[iData].time;
+
                               
                     
                     
