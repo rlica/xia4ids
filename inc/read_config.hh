@@ -75,7 +75,7 @@ void read_config(int argc, char **argv) {
   
   //checking the format
   if(!fscanf(input_file,"Format    %s\n",   format_string)) {
-    printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stats, root}\n",  argv[1]);
+    printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stat, root, rate}\n",  argv[1]);
     exit(0);
   }  
   if      ( strncmp(format_string, "stat", 4) == 0 )  { stat = 1; printf("Running in STAT mode\n"); }
@@ -84,7 +84,7 @@ void read_config(int argc, char **argv) {
   else if ( strncmp(format_string, "gasp", 4) == 0 )  { gasp = 1; printf("Running in GASP mode\n"); }
   else if ( strncmp(format_string, "root", 4) == 0 )  { root = 1; printf("Running in ROOT mode\n"); }
   else {
-    printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stats, root}\n",  argv[1]);
+    printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stat, root, rate}\n",  argv[1]);
     exit(0);
   } 
   

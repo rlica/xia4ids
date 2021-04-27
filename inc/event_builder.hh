@@ -150,24 +150,24 @@ void event_builder() {
 		// LRT: low resolution time
 		
 		
-		//Always take the timestamp in run_unit units
+		//Timestamp in run_unit units
 		lrt_run = 1 + (DataArray[k].time-first_ts)/run_unit;
-		if (lrt_run > 8192) { //Fix LRT not higher than 8192:
-		printf("\n LRT Overflow Warning: Run timestamp > 8192 - Increase the run_unit value\n");
-		lrt_run = 8191;
+		if (lrt_run > 8191) { //Fix LRT higher than 8192:
+			// printf("\n LRT Overflow Warning: Run timestamp > 8192 - Increase the run_unit value\n");
+			lrt_run = 8191;
 		}
 		
 		//Reference vs proton pulse
 		if (reftype == 0)  // we don't take the reference time
-		lrt_ref = 0;
+			lrt_ref = 0;
 		else if (reftype > 0 && tref == 0)   //signals at the beginning of data for which we don't have reference information
-		lrt_ref = 8191;
+			lrt_ref = 8191;
 		else    //signals for which we have ref
-		lrt_ref =    (DataArray[k].time-tref)/ref_unit;
+			lrt_ref =    (DataArray[k].time-tref)/ref_unit;
 		
-		if (lrt_ref > 8192) { //Fix LRT not higher than 8192:
-		//printf("\n LRT Overflow Warning: Reference time > 8192 - Increase the ref_unit value\r");
-		lrt_ref = 8191;
+		if (lrt_ref > 8191) { //Fix LRT not higher than 8192:
+			//printf("\n LRT Overflow Warning: Reference time > 8192 - Increase the ref_unit value\r");
+			lrt_ref = 8191;
 		} 
       
     
@@ -179,6 +179,9 @@ void event_builder() {
       
       evSize = 1+1+dettypes; //includes GASPWare separator (1), headers (1) and (dettypes) detector types
       
+      // evSize = 1+dettypes; //includes GASPWare separator (1), and (dettypes) detector types
+      
+      
       //removing the types that will not be treated as detectors
       if( reftype != 0) evSize--;
       if(  cs_tac != 0) evSize--;
@@ -186,12 +189,12 @@ void event_builder() {
       
       
       
-      if(evSize <= 2) {
+      if(evSize < 3) {
 	printf("ERROR: No detector types in the config file to be converted. (evSize = %d)\n", evSize);
 	exit(0);
       }
       
-      for (j=0; j<=dettypes; j++) detcount[j]=0;  //required for GASPWare to keep track of the detectors in the event
+      for (j=1; j<=dettypes; j++) detcount[j]=0;  //required for GASPWare to keep track of the detectors in the event
       
       for(j=1; j<=dettypes; j++) 
 	if (j!=cs_tac && j!=flagtype && j!=reftype)
@@ -203,15 +206,15 @@ void event_builder() {
                 EventArray[iEvt].elem[evSize++] = DataArray[k+n].energy;    //parameter 0
                 EventArray[iEvt].elem[evSize++] = hrt[n];                //parameter 1
                 if ( reftype > 0 )
-		EventArray[iEvt].elem[evSize++] = lrt_ref;               //parameter 2
+					EventArray[iEvt].elem[evSize++] = lrt_ref;               //parameter 2
                 if ( link_type[cs_tac] == j )
-		  EventArray[iEvt].elem[evSize++] = tac[i];              //parameter 2/3 (optional)
+					EventArray[iEvt].elem[evSize++] = tac[i];              //parameter 2/3 (optional)
                 if ( pair_tac == j ) {
-		  EventArray[iEvt].elem[evSize++] = pair_start[i];       //parameter 2/3 (optional)
-		  EventArray[iEvt].elem[evSize++] = pair_stop[i];        //parameter 3/4 (optional)
-	        }            
+					EventArray[iEvt].elem[evSize++] = pair_start[i];       //parameter 2/3 (optional)
+					EventArray[iEvt].elem[evSize++] = pair_stop[i];        //parameter 3/4 (optional)
+				}            
                 if ( flagtype!=0 )
-		  EventArray[iEvt].elem[evSize++] = flag;                   //parameter 4 or 5 (optional)
+					EventArray[iEvt].elem[evSize++] = flag;                   //parameter 4 or 5 (optional)
                 detcount[j]++;
                 break;
             }
@@ -220,6 +223,9 @@ void event_builder() {
 	printf("ERROR: event_builder.h - evSize = %d (>200 !).\n", evSize);
 	exit(0);
       }
+      
+      
+      // Filling up the GASPware event array
 
       index = 0;
       EventArray[iEvt].evSize = evSize-1; // does not include the separator
@@ -229,9 +235,9 @@ void event_builder() {
       EventArray[iEvt].elem[index++] = lrt_run;  //Gasp Event Header - Timestamp in run units
       // EventArray[iEvt].elem[index++] = header_diff;  
        
-      for (j=1; j<=dettypes; j++)
-	if (j!=cs_tac && j!=flagtype && j!=reftype) 
-	  EventArray[iEvt].elem[index++] = detcount[j];
+      for (j=1; j<=dettypes; j++) 
+		if (j!=cs_tac && j!=flagtype && j!=reftype) 
+			EventArray[iEvt].elem[index++] = detcount[j];
 	  
       iEvt++;
       k+=m;

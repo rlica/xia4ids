@@ -38,7 +38,7 @@ typedef struct dataStruct {
 } dataStruct;
 
 typedef struct Event {
-  int elem[MAX_NUM_DET];
+  short int elem[MAX_NUM_DET];
   short int evSize;
 } Event;
 
