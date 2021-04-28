@@ -194,10 +194,12 @@ void event_builder() {
 	exit(0);
       }
       
-      for (j=1; j<=dettypes; j++) detcount[j]=0;  //required for GASPWare to keep track of the detectors in the event
       
-      for(j=1; j<=dettypes; j++) 
-	if (j!=cs_tac && j!=flagtype && j!=reftype)
+      // Cycling through each signal in the event and storing only detector types in order
+      
+      for(j=1; j<=dettypes; j++) {
+		detcount[j]=0;
+		if (j!=cs_tac && j!=flagtype && j!=reftype)
           for(i=1; i<=maxnum[j]; i++)   
             for(n=0; n<m; n++)
               if (ntmc[j][DataArray[k+n].modnum][DataArray[k+n].chnum] == i)  {
@@ -215,9 +217,10 @@ void event_builder() {
 				}            
                 if ( flagtype!=0 )
 					EventArray[iEvt].elem[evSize++] = flag;                   //parameter 4 or 5 (optional)
-                detcount[j]++;
+                detcount[j]++;                                             //required for GASPWare to keep track of the detectors in the event
                 break;
             }
+      }
             
       if (evSize > 200) {
 	printf("ERROR: event_builder.h - evSize = %d (>200 !).\n", evSize);
@@ -225,7 +228,7 @@ void event_builder() {
       }
       
       
-      // Filling up the GASPware event array
+      // Filling up the header of the GASPware event array
 
       index = 0;
       EventArray[iEvt].evSize = evSize-1; // does not include the separator
