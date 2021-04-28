@@ -208,15 +208,14 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
                 std::cout << "debug: Retrieved spill of " << nBytes << " bytes (" << nBytes / 4 << " words)\n";
                 std::cout << "debug: Read up to word number " << binary_file.tellg() / 4 << " in input file\n";
             }
-            if (rate == 1) {	// Ratemeter mode will only process the last spills from a file
+            if (rate == 1) {	// Ratemeter mode will only process the last spills from a file, if the file is smaller than RATE_EOF_MB, it will read the entire file
 				pos_index = binary_file.tellg();
 				if (int(file_length) > int (RATE_EOF_MB) * 1048576 && pos_index < int(file_length) - int (RATE_EOF_MB) * 1048576) {
 					delete[] data_;
 					binary_file.close();
 					return 0;
 				}
-			}
-            
+			}            
             if (!bad_spill) {
                 if (debug_mode)
                     std::cout << "Spill is full and good!" << std::endl;
