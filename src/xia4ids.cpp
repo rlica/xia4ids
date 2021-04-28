@@ -187,10 +187,12 @@ int main(int argc, char **argv)
                     // memset(TempArray,0,memoryuse); //Used only when sorting 
                     
                     // read_ldf() will read a fixed number of spills at once from the binary file
-                    raw_list_size += read_ldf(ldf, data, ldf_pos_index);
+                    raw_list_size  += read_ldf(ldf, data, ldf_pos_index);
                     good_list_size += iData;
                     
-                    if (rate == 1) ldf_pos_index = int(file_length) - int (RATE_EOF_MB) * 1048576;
+                    // Ratemeter mode will only read the last spills from a file
+                    if (rate == 1)
+						ldf_pos_index = int(file_length) - int (RATE_EOF_MB) * 1048576;
 					
 					// Displaying the progress bar
                     progress = float(ldf_pos_index) / float(file_length);

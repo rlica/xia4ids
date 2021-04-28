@@ -94,10 +94,10 @@ void event_builder() {
     
     
       //checking the coincidence level (fold)
-      if (e < fold) {
-	k++;
-	continue;
-      }
+		if (e < fold) {
+			k++;
+			continue;
+		}
       
       
         //extracting timing information (HRT and LRT)
@@ -116,10 +116,10 @@ void event_builder() {
 	    if (pair_tac!=0 && tmc[DataArray[k+n].modnum][DataArray[k+n].chnum] == link_type[pair_tac] ) {
 	      index = ntmc[link_type[pair_tac]] [DataArray[k+n].modnum] [DataArray[k+n].chnum];
 	      for (i=1; i<=maxnum[pair_tac]; i++) {
-		if (start[i][pair_tac] == index)        //from config: start[index][dettype]
-		  pair_start[i] = DataArray[k+n].energy;
-		if (stop[i][pair_tac] == index)
-		  pair_stop[i] = DataArray[k+n].energy;
+			if (start[i][pair_tac] == index)        //from config: start[index][dettype]
+			pair_start[i] = DataArray[k+n].energy;
+			if (stop[i][pair_tac] == index)
+			pair_stop[i] = DataArray[k+n].energy;
 	      }
 	    }
 	    
@@ -127,25 +127,25 @@ void event_builder() {
         
           //cs_tac (common start) is a parameter for each stop detector
           else if (cs_tac!=0 && tmc[DataArray[k+n].modnum][DataArray[k+n].chnum] == cs_tac) {
-	    index = ntmc[cs_tac][DataArray[k+n].modnum][DataArray[k+n].chnum];
+			index = ntmc[cs_tac][DataArray[k+n].modnum][DataArray[k+n].chnum];
             //11.09.2015
-	    //if the same mod+ch+type is defined as multiple indexes,
-	    //the index will be 10203 (if defined as 1,2,3) or 141516(if 14,15,16)
-	    while (index%100>0) { 
-	      tac[index%100] = DataArray[k+n].energy;
-	      index = index / 100;
-	    }
+			//if the same mod+ch+type is defined as multiple indexes,
+			//the index will be 10203 (if defined as 1,2,3) or 141516(if 14,15,16)
+			while (index%100>0) { 
+				tac[index%100] = DataArray[k+n].energy;
+				index = index / 100;
+			}
 
 	    
-	  }
+		  }
 	      
           else if (flagtype !=0 && tmc[DataArray[k+n].modnum][DataArray[k+n].chnum] == flagtype) {
-	    index = ntmc[flagtype][DataArray[k+n].modnum][DataArray[k+n].chnum];
-	    flag = index*10;  //we should have at least 2 flags for this to make sense
-	  }	              //eg: tape move / tape stop, beam on / beam off...
+			index = ntmc[flagtype][DataArray[k+n].modnum][DataArray[k+n].chnum];
+			flag = index*10;  //we should have at least 2 flags for this to make sense
+		  }		              //eg: tape move / tape stop, beam on / beam off...
                               //the flag parameter will be 10, 20, ... depending on the flag index  
             
-	}
+		}
     
 		// LRT: low resolution time
 		
