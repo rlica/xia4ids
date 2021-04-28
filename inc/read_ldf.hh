@@ -2,7 +2,7 @@
 // Updated by Razvan Lica, 2021
 
 //.ldf file structure:
-// word (1 byte) -> buffer (8194 words) -> chunk (Head + Dir + Data buffers)-> spill -> file -> run (one file or multiple 2Gb files)
+// word (1 byte) -> buffer (8194 words) -> chunk (Head + Dir + Data buffers)-> spill -> file -> run (one file <2GB or multiple 2GB files)
 
 #include <iostream>
 #include <sstream>
@@ -12,12 +12,6 @@
 #include "LDFReader.h"
 #include "XiaData.h"
 #include "Unpacker.h"
-
-#define binary_file ldf.GetFile() /// Main input file (binary file)
-#define file_length ldf.GetFileLength() /// Main input file length (in bytes).
-//#define curr_buffer data.GetCurrBuffer()
-//#define next_buffer data.GetNextBuffer()
-//#define buff_pos data.GetBuffPos()
 
 #define HEAD 1145128264 /// Run begin buffer
 #define DATA 1096040772 /// Physics data buffer
@@ -63,12 +57,12 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     // variable for decoding the data spill
     Unpacker unpacker_; /// Pointer to class derived from Unpacker class.
 
-    binary_file.open(ldf.GetName().c_str(), std::ios::binary);
+    ldf.GetFile().open(ldf.GetName().c_str(), std::ios::binary);
 
-    if (!binary_file.is_open() || !binary_file.good()) {
-        if (!binary_file.is_open()) { std::cout << "binary file cannot be opened."; }
+    if (!ldf.GetFile().is_open() || !ldf.GetFile().good()) {
+        if (!ldf.GetFile().is_open()) { std::cout << "binary file cannot be opened."; }
         std::cout << " ERROR! Failed to open input file '" << ldf.GetName() << "'! Check that the path is correct.\n";
-        binary_file.close();
+        ldf.GetFile().close();
         data.SetRetVal(6);
         return -1;
     }
@@ -83,24 +77,24 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     else
         std::cout << "No maximum number of spills specified, proceed to read all spills!" << std::endl;
     // Get length and rewind to read from beg
-    binary_file.seekg(0, binary_file.beg);
+    ldf.GetFile().seekg(0, ldf.GetFile().beg);
 
     //// Start reading ldf DIR buffer
     //// First we check type and size
-    //binary_file.read((char*) &check_bufftype_dir, 4);
-    //binary_file.read((char*) &check_buffsize_dir, 4);
+    //ldf.GetFile().read((char*) &check_bufftype_dir, 4);
+    //ldf.GetFile().read((char*) &check_buffsize_dir, 4);
     //if (check_bufftype_dir != dir.GetBufferType() ||
     //    check_buffsize_dir != dir.GetBufferSize()) { // Not a valid DIR buffer
-    //    binary_file.seekg(-8, binary_file.cur); // Rewind to the beginning of this buffer
+    //    ldf.GetFile().seekg(-8, ldf.GetFile().cur); // Rewind to the beginning of this buffer
     //    std::cout << "Not a valid HEAD buffer, rewinded and returned -1";
     //    return -1;
     //}
     //// First buffer is indeed DIR, proceed
-    //binary_file.read((char*) unknown, 8);
+    //ldf.GetFile().read((char*) unknown, 8);
     //dir.SetUnknown(unknown);
-    //binary_file.read((char*) &run_num, 4);
+    //ldf.GetFile().read((char*) &run_num, 4);
     //dir.SetRunNum(run_num);
-    //binary_file.seekg(((unsigned long long) check_buffsize_dir * 4 - 20), binary_file.cur); // Skip the rest of the buffer
+    //ldf.GetFile().seekg(((unsigned long long) check_buffsize_dir * 4 - 20), ldf.GetFile().cur); // Skip the rest of the buffer
     //std::cout << "check_bufftype_dir: " << check_bufftype_dir << std::endl;
     //std::cout << "check_buffsize_dir: " << check_buffsize_dir << std::endl;
     //std::cout << "unknown dummy: " << *unknown << std::endl;
@@ -113,29 +107,29 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
 
 
     //// Start reading ldf HEAD buffer
-    //binary_file.read((char*)&check_bufftype_head, 4);
-    //binary_file.read((char*)&check_buffsize_head, 4);
+    //ldf.GetFile().read((char*)&check_bufftype_head, 4);
+    //ldf.GetFile().read((char*)&check_buffsize_head, 4);
     //if (check_bufftype_head != head.GetBufferType() ||
     //    check_buffsize_head != head.GetBufferSize()) { // Not a valid HEAD buffer
-    //    binary_file.seekg(-8, binary_file.cur); // Rewind to the beginning of this buffer
+    //    ldf.GetFile().seekg(-8, ldf.GetFile().cur); // Rewind to the beginning of this buffer
     //    std::cout << "Not a valid HEAD buffer, rewinded to beginning of buffer and returned -1";
     //    //return -1;
     //}
 
-    //binary_file.read(facility, 8);
+    //ldf.GetFile().read(facility, 8);
     //facility[8] = '\0';
-    //binary_file.read(format, 8);
+    //ldf.GetFile().read(format, 8);
     //format[8] = '\0';
-    //binary_file.read(type, 16);
+    //ldf.GetFile().read(type, 16);
     //type[16] = '\0';
-    //binary_file.read(date, 16);
+    //ldf.GetFile().read(date, 16);
     //date[16] = '\0';
-    //binary_file.read(run_title, 80);
+    //ldf.GetFile().read(run_title, 80);
     //run_title[80] = '\0';
-    //binary_file.read((char*)&run_num_2, 4);
-    //binary_file.seekg((ACTUAL_BUFF_SIZE * 4 - 140),
-    //    binary_file.cur); // Skip the rest of the buffer
-    //std::cout << "index after dir is: " << binary_file.tellg() << std::endl;
+    //ldf.GetFile().read((char*)&run_num_2, 4);
+    //ldf.GetFile().seekg((ACTUAL_BUFF_SIZE * 4 - 140),
+    //    ldf.GetFile().cur); // Skip the rest of the buffer
+    //std::cout << "index after dir is: " << ldf.GetFile().tellg() << std::endl;
     //std::cout << "head buffer type is: " << check_bufftype_head;
 
 
@@ -145,18 +139,18 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     // Start reading ldf DATA buffers
     if (pos_index == 0)
     {
-        binary_file.seekg(65552, binary_file.beg); //10010 (hex) offset of DATA buffer type
+        ldf.GetFile().seekg(65552, ldf.GetFile().beg); //10010 (hex) offset of DATA buffer type
     }
     else
     {
-        binary_file.seekg(pos_index, binary_file.beg); // resume reading the following spills
+        ldf.GetFile().seekg(pos_index, ldf.GetFile().beg); // resume reading the following spills
     }
     
 
     // data.Reset();
 
     while (true) {
-        if (!data.Read(&binary_file, (char*)data_, nBytes, 0, full_spill, bad_spill, debug_mode)) {     // Reading a spill from the binary file
+        if (!data.Read(&ldf.GetFile(), (char*)data_, nBytes, 0, full_spill, bad_spill, debug_mode)) {     // Reading a spill from the binary file
 			
 			
             if (data.GetRetval() == 1) {
@@ -196,7 +190,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
 
         if (debug_mode) {
             status << "\033[0;32m" << " [READ] " << "\033[0m" << nBytes / 4 << " words ("
-                << 100 * binary_file.tellg() / file_length << "%), ";
+                << 100 * ldf.GetFile().tellg() / ldf.GetFileLength() << "%), ";
             status << "GOOD = " << data.GetNumChunks() << ", LOST = " << data.GetNumMissing();
             std::cout << "\r" << status.str();
         }
@@ -206,13 +200,13 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
             if (debug_mode) {
                 std::cout << std::endl << "full spill is true!" << std::endl;
                 std::cout << "debug: Retrieved spill of " << nBytes << " bytes (" << nBytes / 4 << " words)\n";
-                std::cout << "debug: Read up to word number " << binary_file.tellg() / 4 << " in input file\n";
+                std::cout << "debug: Read up to word number " << ldf.GetFile().tellg() / 4 << " in input file\n";
             }
             if (rate == 1) {	// Ratemeter mode will only process the last spills from a file, if the file is smaller than RATE_EOF_MB, it will read the entire file
-				pos_index = binary_file.tellg();
-				if (int(file_length) > int (RATE_EOF_MB) * 1048576 && pos_index < int(file_length) - int (RATE_EOF_MB) * 1048576) {
+				pos_index = ldf.GetFile().tellg();
+				if (int(ldf.GetFileLength()) > int (RATE_EOF_MB) * 1048576 && pos_index < int(ldf.GetFileLength()) - int (RATE_EOF_MB) * 1048576) {
 					delete[] data_;
-					binary_file.close();
+					ldf.GetFile().close();
 					return 0;
 				}
 			}            
@@ -225,7 +219,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
                     std::cout << std::endl << std::endl;
             }
             else {
-                std::cout << " WARNING: Spill has been flagged as corrupt, skipping (at word " << binary_file.tellg() / 4
+                std::cout << " WARNING: Spill has been flagged as corrupt, skipping (at word " << ldf.GetFile().tellg() / 4
                         << " in file)!\n";
             }        
 
@@ -233,13 +227,13 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
         else if (debug_mode) {
             std::cout << std::endl << "Not full spill!" << std::endl;
             std::cout << "debug: Retrieved spill fragment of " << nBytes << " bytes (" << nBytes / 4 << " words)\n";
-            std::cout << "debug: Read up to word number " << binary_file.tellg() / 4 << " in input file\n";
+            std::cout << "debug: Read up to word number " << ldf.GetFile().tellg() / 4 << " in input file\n";
             std::cout << std::endl << std::endl;
         }
         
         
 		num_spills_recvd++;					// Counting the number of spills processed
-        pos_index = binary_file.tellg();	// Setting the pointer to the current position in the file
+        pos_index = ldf.GetFile().tellg();	// Setting the pointer to the current position in the file
     	                          
         if (debug_mode)
             std::cout << "Number of spills recorded (and parsed): " << num_spills_recvd << " spills" << std::endl;
@@ -325,7 +319,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
 		delete decodedList_[i];
     
         
-    binary_file.close();
+    ldf.GetFile().close();
                 
     return decodedList_.size();
 }

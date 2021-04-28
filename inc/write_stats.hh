@@ -12,7 +12,7 @@ void write_stats() {
     printf("\n---------------------------------------------------------------------------------\n");
     printf("RUN #%d \nRecorded in:\t\t %.2f s \nBad/Good data chunks:\t %d/%d  \nRaw/Good signals:\t %d/%d\n\n", 
 		runnumber, tot_run_time, run_missing_chunks, run_good_chunks, raw_list_size, good_list_size);  
-    fprintf(outfile, "RUN #%d \nRecorded in:\t\t \nBad/Good data chunks:\t %d/%d \nRaw/Good signals:\t %d/%d\n\n", 
+    fprintf(outfile, "RUN #%d \nRecorded in:\t\t %.2f s \nBad/Good data chunks:\t %d/%d \nRaw/Good signals:\t %d/%d\n\n", 
 		runnumber, tot_run_time, run_missing_chunks, run_good_chunks, raw_list_size, good_list_size);  
 
 	if (run_missing_chunks > 0)

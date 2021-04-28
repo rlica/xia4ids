@@ -5,7 +5,7 @@
   
   The calibration file format is:
 
-  MODULE1 CHANNEL2 A1 B1 C1 D1
+  MODULE1 CHANNEL1 A1 B1 C1 D1
   MODULE2 CHANNEL2 A2 B2 C2 D2
   * 
   * 
@@ -19,14 +19,14 @@ void read_cal(int argc, char **argv) {
   int status, module, channel, count=0;
   double cal[MAX_CAL];
   FILE *cal_file;
-  char line[100];
+  char line[10000];
     
   if ( rate == 0 && (argc < 3 || !fopen(argv[2], "r")) ) {
-    printf("No calibrations will be used: ...$n4i [config_file_name] [cal_file_name] \n");
+    printf("No calibrations will be used: ...$xia4ids [config_file_name] [cal_file_name] \n");
     return;
   }
   else if ( rate == 1 && (argc < 4 || !fopen(argv[3], "r")) ) {
-    printf("No calibrations will be used: ...$n4i [config_file_name] [input_file] [cal_file] \n");
+    printf("No calibrations will be used: ...$xia4ids [config_file_name] [input_file] [cal_file] \n");
     return;
   }
   else if (rate == 0 ) cal_file = fopen(argv[2], "r");
@@ -57,7 +57,7 @@ void read_cal(int argc, char **argv) {
       for (i = 0; i < MAX_CAL; i++) calib[module][channel][i] = cal[i];
    }
    
-   printf("Read calibrations for %d channels.\n", count);
+   printf("Successfull reading of calibration coefficients for %d channels.\n", count);
    
    have_cal = 1;
    
