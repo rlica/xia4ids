@@ -58,7 +58,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     std::stringstream status;
 
     // variable that stores data spill
-    unsigned int* data_ = new unsigned int[250000];
+    unsigned int* data_ = new unsigned int[memoryuse];
 
     // variable for decoding the data spill
     Unpacker unpacker_; /// Pointer to class derived from Unpacker class.
@@ -208,6 +208,15 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
                 std::cout << "debug: Retrieved spill of " << nBytes << " bytes (" << nBytes / 4 << " words)\n";
                 std::cout << "debug: Read up to word number " << binary_file.tellg() / 4 << " in input file\n";
             }
+            if (rate == 1) { 													// Ratemeter mode will only process the last spills from a file
+				pos_index = binary_file.tellg();
+				if (pos_index < int(file_length) - int (RATE_EOF_MB) * 1048576) {
+					delete[] data_;
+					binary_file.close();
+					return 0;
+				}
+			}
+            
             if (!bad_spill) {
                 if (debug_mode)
                     std::cout << "Spill is full and good!" << std::endl;
@@ -228,17 +237,18 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
             std::cout << "debug: Read up to word number " << binary_file.tellg() / 4 << " in input file\n";
             std::cout << std::endl << std::endl;
         }
-    
-        num_spills_recvd++;
-        pos_index = binary_file.tellg();
         
+        
+		num_spills_recvd++;					// Counting the number of spills processed
+        pos_index = binary_file.tellg();	// Setting the pointer to the current position in the file
+    	                          
         if (debug_mode)
             std::cout << "Number of spills recorded (and parsed): " << num_spills_recvd << " spills" << std::endl;
-        if (num_spills_recvd == max_num_spill && max_num_spill != 0) {                          // Reading until we reach the spill reading limit set in xia4ids.hh
+        
+        // Reading until we reach the spill reading limit set in xia4ids.hh	
+        if (num_spills_recvd == max_num_spill && max_num_spill != 0) {                          
             if (debug_mode)
                 std::cout << "Limit of number of events to record = " << max_num_spill << " has been reached!" << std::endl;
-            pos_index = binary_file.tellg();
-            // pos_index -= ACTUAL_BUFF_SIZE*4;
             break;
         }
         
