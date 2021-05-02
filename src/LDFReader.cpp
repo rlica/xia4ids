@@ -47,6 +47,7 @@ void DATA_buffer::Reset() {
 bool DATA_buffer::read_next_buffer(std::ifstream* f_, bool force_) {
     if (!f_ || !f_->good() || f_->eof()) { 
         std::cout << "file is bad, or it's eof" << std::endl;
+        exit(0);  // RL added this to quickly end the program
         return false; 
     }
     // First data buffer, just read like normal

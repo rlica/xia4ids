@@ -12,8 +12,12 @@ OBJ_DIR = ./obj
 TARGET = $(BIN_DIR)/xia4ids
 INC_FLAGS = -I $(INC_DIR)
 
-CC_FLAGS = $(INC_FLAGS) -g `root-config --cflags`
+# Address Sanitizer (yum install libasan)
+# CC_FLAGS = $(INC_FLAGS) -g -fsanitize=address `root-config --cflags`
+# LD_FLAGS = -fsanitize=address `root-config --glibs`
 
+# Normal compile
+CC_FLAGS = $(INC_FLAGS) -g `root-config --cflags`
 LD_FLAGS = `root-config --glibs`
 
 
@@ -24,7 +28,6 @@ HEADERS = \
 			event_builder.hh \
 			event_builder_list.hh \
 			event_builder_tree.hh \
-			EventFilters.h \
 			Exceptions.h \
 			HelperEnumerations.hpp \
 			LDFReader.h \
@@ -39,13 +42,11 @@ HEADERS = \
 			write_list.hh \
 			write_stats.hh \
 			write_time.hh \
-			write_tree.hh \
 			XiaData.h \
 			XiaListModeDataMask.h
 
 
 			SRC = \
-			EventFilters.cpp \
 			LDFReader.cpp \
 			xia4ids.cpp \
 			Unpacker.cpp \

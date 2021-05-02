@@ -1,10 +1,11 @@
 
-
+//In correlation mode, we need to delay the stop (stop = secondCh,secondMod)
+//The start is always the same reference and should not be used as stop
 
 
 void correlations() {
 	
-	corr_unit = ref_unit;
+	//corr_unit = ref_unit;
 
   
   for (j=0; j<corr; j++) {

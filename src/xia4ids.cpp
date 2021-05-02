@@ -1,7 +1,9 @@
 /*
 XIA DGF Pixie-16 .ldf to GASPware and ROOT converter
-R. Lica, 2021
-razvan.lica@cern.ch
+
+Authors:
+R. Lica, IFIN-HH - CERN, razvan.lica@cern.ch 2020-2021 
+K. Phan, TUNI - CERN Summer student 2020 (.ldf readout integration from PAAAS)
 
 https://github.com/rlica/xia4ids
 
@@ -41,16 +43,6 @@ https://github.com/rlica/xia4ids
 #include "write_time.hh"
 #include "read_ldf.hh"
 
-#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
-#define PBWIDTH 60
-
-void printProgress(double percentage) {
-    int val = (int) (percentage * 100);
-    int lpad = (int) (percentage * PBWIDTH);
-    int rpad = PBWIDTH - lpad;
-    printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
-    // fflush(stdout);
-}
 
 int main(int argc, char **argv)
 {
@@ -59,40 +51,38 @@ int main(int argc, char **argv)
 
     printf("\n\t\t----------------------------------");
     printf("\n\t\t    XIA DGF Pixie-16 Converter");
-    printf("\n\t\t           v11.04.2021  ");
+    printf("\n\t\t           v04.2021  ");
     printf("\n\t\t https://github.com/rlica/xia4ids");
     printf("\n\t\t----------------------------------");
     printf("\n\n");
 
     read_config(argc, argv);
 
-    // read_cal(argc, argv);
+    read_cal(argc, argv);
 
     //Allocating memory
-    DataArray = (struct data *)calloc(memoryuse + 10000, sizeof(struct data));
-    TempArray = (struct data *)calloc(memoryuse + 10000, sizeof(struct data));
+    DataArray = (struct dataStruct *)calloc(memoryuse, sizeof(struct dataStruct));
+    TempArray = (struct dataStruct *)calloc(memoryuse, sizeof(struct dataStruct));
 
-
-    //if (root == 1)
-        //TEventArray = (struct TEvent *)calloc(memoryuse + 10000, sizeof(struct TEvent));
-
-    if (gasp == 1 || list == 1)
-    {
-        EventArray = (struct Event *)calloc(memoryuse + 10000, sizeof(struct Event));
-        GHeader = (struct GaspRecHeader *)calloc(1, sizeof(struct GaspRecHeader));
+    if (gasp == 1 || list == 1) {
+		EventArray = (struct Event *)calloc(memoryuse, sizeof(struct Event));
+		GHeader = (struct GaspRecHeader *)calloc(1, sizeof(struct GaspRecHeader));
     }
 
-    /////////////////////////////////////////////////////////////////// Reading run by run
+    // Reading run by run
     for (runnumber = runstart; runnumber <= runstop; runnumber++)
     {
-
+		
+		raw_list_size = 0, good_list_size = 0;
         totEvt = 0;
         tref = 0;
+        run_good_chunks = 0;
+        run_missing_chunks = 0;
+        
         bool first_cycle = true; // to keep track of total run time
 
         // Open output file
-        if ((gasp == 1 || list == 1 || root == 1) && corr == 0)
-        {
+        if (corr == 0) {
 
             //GASPware format
             if (gasp == 1)
@@ -128,193 +118,176 @@ int main(int argc, char **argv)
                 }
                 define_root();
             }
-        }
+        }    
         
-      
-        if (rate == 1)
-        { //Rate mode takes the input file as the second argument
-            if (argc < 3)
-            {
-                printf("Config file and input file required as arguments: ...$n4i [config_file_name] [input file] \n");
-                exit(0);
-            }
-            sprintf(filename, "%s", argv[2]);
-            fp_in = fopen(argv[2], "rb");
-            if (!fp_in)
-            {
-                fprintf(stderr, "Unable to open %s - %m\n", filename);
-                exit(0);
-            }
 
-            //Binary file object
-            LDF_file ldf(filename);
-            DATA_buffer data;
-            int ldf_pos_index = 0;
-
-
-            start_clock = (double)clock();
-
-            // Reading the .ldf file in portions of 500 spills
-            printf("Reading .ldf file %s \n", filename);
-            iData = read_ldf(tmc, ldf, data, ldf_pos_index);
-
-            // First and last time stamps for statistics.
-            first_ts = DataArray[1].time;
-            last_ts = DataArray[iData].time;
-
-            if (root == 1)
-            {
-                event_builder_tree();
-                totEvt += iEvt;
-                // write_time();
-            }
-        }
-        // Format: normal mode (not rate mode).
-        else
-            for (runpart = 0; runpart < 1000; runpart++) // Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
-            {
-                start_clock = (double)clock();
+			
+		// Cycling over run partitions (a large run will be split into several files of 2.0 Gb each -> one run partition = one file)
+		for (runpart = 0; runpart < 1000; runpart++) { 
+           
+			start_clock = (double)clock();
+               
+			//Ratemeter mode, analysing only the last RATE_EOF_MB megabytes from a file
+			if (rate == 1) {
+				if (argc < 3) { //Rate mode takes the input file as the second argument
+					printf("Config file and input file required as arguments: ...$xia4ids config_file_name input file [calibration] \n");
+					exit(0);
+				}
+				sprintf(filename, "%s", argv[2]);
+				fp_in = fopen(argv[2], "rb");
+				if (!fp_in) {
+					printf("ERROR: Unable to open %s \n", filename);
+					exit(0);
+				}
+				if (runpart > 0) break;
+			}				
+               
+			// Normal mode analysing the full file
+			if (rate == 0) {
 				if (runpart == 0)
 					sprintf(filename, "%s%03d.ldf", runname, runnumber);
 				else
 					sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
+				fp_in = fopen(filename, "rb");
+				if (!fp_in) {
+					printf("File parsing completed: %s does not exist\n", filename);
+					break;
+				}
+			}
+			
+			
+			//Initializing the binary file object
+			LDF_file ldf(filename);
+			DATA_buffer data;
+			int ldf_pos_index = 0;
+			float progress = 0.0;
 
-                fp_in = fopen(filename, "rb");
-                if (!fp_in)
-                {
-                    fprintf(stderr, "File does not exist %s - %m\n", filename);
-                    break;
-                }
+			// Set file length
+			ldf.GetFile().open(ldf.GetName().c_str(), std::ios::binary);
+			ldf.GetFile().seekg(0, ldf.GetFile().end);
+			ldf.SetLength(ldf.GetFile().tellg());
+			ldf.GetFile().seekg(0, ldf.GetFile().beg);
+			ldf.GetFile().close();
+			printf("Filename:  %s \nFile size: %.2f MB \n", filename, float(ldf.GetFileLength())/1048576);
 
-                //Binary file object
-                LDF_file ldf(filename);
-                DATA_buffer data;
-                int ldf_pos_index = 0;
-                float progress = 0.0;
-                int barWidth = 70;
 
-                // Set file length then rewind to the beginning.
-                printf("Finding file length \n");
-                binary_file.open(ldf.GetName().c_str(), std::ios::binary);
-                binary_file.seekg(0, binary_file.end);
-                ldf.SetLength(binary_file.tellg());
-                binary_file.seekg(0, binary_file.beg);
-                binary_file.close();
-                printf("Done \n");
+			// Start of a reading cycle:
+			while (data.GetRetval() != 2 && ldf_pos_index <= ldf.GetFileLength()) {
 
-                // Start of a cycle:
-                while (true) {
-                    // Begin to parse ldf filename.
-                    // iData is now the last data index.
-                    memset(DataArray,0,memoryuse + 10000);  //Initializing the data array to zero
-                    memset(TempArray,0,memoryuse + 10000);
-
-                    iData = read_ldf(tmc, ldf, data, ldf_pos_index);
-        
-                    progress = float(ldf_pos_index) / float(file_length);
-
-                    printProgress(progress);
-
+				// iData will be the last data index.
+				iData=0, iEvt=0;
                    
-                    // Sorting the data chronologically.
-                    MergeSort(DataArray, TempArray, 0, iData);
+				// Initializing the data array to zero
+				memset(DataArray,0,memoryuse);  
+				memset(TempArray,0,memoryuse); //Used only when sorting
+				
+				// Displaying the progress bar
+				progress = float(ldf_pos_index) / float(ldf.GetFileLength());
+				printProgress(progress);
+									
+				// read_ldf() will read a fixed number of spills at once from the binary file
+				// if ratemode is enabled, read_ldf() will process only the last part of the file
+				raw_list_size  += read_ldf(ldf, data, ldf_pos_index);
+				good_list_size += iData;
+				if (raw_list_size == 0)	continue;               					
+																	
+				// Sorting the data chronologically.
+				MergeSort(DataArray, TempArray, 0, iData);
+									
+				// Extract first and last time stamps 
+				if (first_cycle) { 
+					if (DataArray[1].time > 0)
+						first_ts = DataArray[1].time;
+					else
+						printf("ERROR: Cannot read first timestamp \n");
+					first_cycle = false;
+				}                    
+				if (DataArray[iData-1].time > 0)
+					last_ts = DataArray[iData-1].time;
+								
+				// Writing statistics and skipping the event builder, will sort everything twice as fast
+				if (stat == 1) continue;
+				                       
+				// Looking for correlations
+				if (corr > 0) 
+					correlations();
 
-                       
-                    ////Looking for correlations
-                    //if (corr > 0)
-                    //{
-                        //correlations();
-                        //continue;
-                    //}
+				// Writing to GASPWare
+				else if (gasp == 1) {
+					event_builder();
+					write_gasp();
+					totEvt += iEvt;
+					printf(" %3d events written to %s ", totEvt, outname);
+					write_time(ldf_pos_index, ldf.GetFileLength());
+				}
 
-                    //// Writing to GASPWare
-                    //else if (gasp == 1)
-                    //{
-                        //event_builder();
-                        //write_gasp();
-                        //totEvt += iEvt;
+				// Writing event lists
+				else if (list == 1) {
+					event_builder_list();
+					write_list();
+					totEvt += iEvt;
+					printf(" %3d events written to %s ", totEvt, outname);
+					write_time(ldf_pos_index, ldf.GetFileLength());
+				}
 
-                        //printf(" (%3d ev/blk) %9d events written to %s ",
-                            //iEvt / (current_block - prev_block + 1), totEvt, outname); //Fixed a very old bug -> add 1 to avoid division by zero (AAAAAAARGH)
+				// Writing to a ROOT Tree
+				else if (root == 1) {
+					event_builder_tree();
+					totEvt += iEvt;
+					printf(" %3d events written to %s ", totEvt, outname);
+					write_time(ldf_pos_index, ldf.GetFileLength());
+				}
 
-                        //// write_time();
-                    //}
+                                      
+				// We break this loop after the entire file is read and parsed.
+				if (data.GetRetval() == 2) { // last cycle.
+					
+					std::cout << std::endl;
+					// std::cout << "First time stamp: " << first_ts << "\t Last time stamp: " << last_ts << std::endl;
+					std::cout << "Finished reading complete file" << std::endl; 
+                     
+					// Checking file integrity 
+					run_good_chunks += data.GetNumChunks(); 
+					run_missing_chunks += data.GetNumMissing();
+                                                     
+                    break;
+				} 
+                                      
+				// We also break this loop when reaching the initially read file length. 
+				// This allows for reading out incomplete files or files that are currently being written.
+				if (ldf_pos_index > ldf.GetFileLength()) {
+					
+                    std::cout << std::endl;
+                    // std::cout << "First time stamp: " << first_ts << "\t Last time stamp: " << last_ts << std::endl;
+                    std::cout << "Finished reading incomplete file" << std::endl; 
+                    break;
+				} 
+	
+				fflush(stdout);
+				
+			} // End of cycling over a partition
+		
+		} // End of cycling over all Run partitions
 
-                    //// Writing event lists
-                    //else if (list == 1)
-                    //{
-                        //event_builder_list();
-                        //write_list();
-                        //totEvt += iEvt;
-                        //printf(" (%3d ev/blk) %9d events written to %s ",
-                            //iEvt / (current_block - prev_block + 1), totEvt, outname);
-                        //// write_time();
-                    //}
-
-                    // Writing a ROOT Tree
-                    if (root == 1)
-                    {
-                        event_builder_tree();
-                        totEvt += iEvt;
-                        printf(" %3d events written to %s ",
-                            iEvt, outname);
-                    }
-
-                    printf("\t");
-
-                    // Extract first and last time stamps for statistics.
-                    if (first_cycle) { // first cycle.
-                        first_ts = DataArray[1].time;
-                        first_cycle = false;
-                    }
-                    
-                    // Khai: We only break this loop after the entire file is read and parsed.
-                    // if (data.GetRetval() == 2) { // last cycle.
-                    //    last_ts = DataArray[iData].time;
-                    //    std::cout << std::endl;
-                    //    std::cout << "First time stamp: " << first_ts << std::endl;
-                    //    std::cout << "Last time stamp: " << last_ts << std::endl; 
-                    //             
-                    //    break; 
-                    //}
-                    
-                    // We only break this loop when reaching the initially read file length. 
-                    // This allows for reading out incomplete files or files that are currently being written.
-                    if (ldf_pos_index <= file_length) {
-						last_ts = DataArray[iData].time;
-                        std::cout << std::endl;
-                        std::cout << "First time stamp: " << first_ts << std::endl;
-                        std::cout << "Last time stamp: " << last_ts << std::endl; 
-                                 
-                        break;
-					} 
-
-                    fflush(stdout);
-                }
-                                 
-            } ////// End of Run partition (one run partition = one file, a large run will be split into several files of 2.0 Gb each)
-
-        //Printing statistics for each run if not in correlation mode
+        // Printing statistics for each run if not in correlation mode
+        // Writing the root file to disk
         if (corr == 0) {
             write_stats();
             memset(stats, 0, sizeof(stats));
+			if (root == 1) {
+				rootfile->Write();
+				rootfile->Save();
+				rootfile->Close();
+			}
         }  
+
+		// Writing correlation statistics for each run to file
+		if (corr > 0)
+			write_correlations();
         
-        if (root == 1 && corr == 0)
-        {
-            // Write everything
-            rootfile->Write();
-            // Close output root file
-            rootfile->Save();
-            rootfile->Close();
-        }
-
-        std::cout << "Finish run!" << std::endl;
-    } ////////////////////////////////////////////////////////////// end of Run
-
-    //Writing correlation statistics for all runs to file
-    if (corr > 0)
-        write_correlations();
+        std::cout << "Sorting completed!" << std::endl;
+    
+    } // end of all Runs
 
     free(DataArray);
     free(TempArray);

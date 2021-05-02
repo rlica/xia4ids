@@ -73,7 +73,7 @@ void event_builder_list() {
     
     //finding clusters of data
     //m = number of signals inside the cluster
-    while ( k+m < iData-1 && DataArray[k+m].time - DataArray[k].time < timegate ) {
+    while ( m <= detnum && k+m < iData-1 && DataArray[k+m].time - DataArray[k].time < timegate ) {
 	     m++;
     
       

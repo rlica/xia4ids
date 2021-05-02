@@ -1,4 +1,5 @@
 //   Reading parameters from config file
+//   Module and channel numbers starts from 0
 
 #include <iostream>
 
@@ -74,16 +75,16 @@ void read_config(int argc, char **argv) {
   
   //checking the format
   if(!fscanf(input_file,"Format    %s\n",   format_string)) {
-    printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stats, root}\n",  argv[1]);
+    printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stat, root, rate}\n",  argv[1]);
     exit(0);
   }  
-  if      ( strncmp(format_string, "stat", 4) == 0 )  stat = 1;
-  else if ( strncmp(format_string, "rate", 4) == 0 )  rate = 1;
-  else if ( strncmp(format_string, "list", 4) == 0 )  list = 1;
-  else if ( strncmp(format_string, "gasp", 4) == 0 )  gasp = 1;
-  else if ( strncmp(format_string, "root", 4) == 0 )  root = 1;
+  if      ( strncmp(format_string, "stat", 4) == 0 )  { stat = 1; printf("Running in STAT mode\n"); }
+  else if ( strncmp(format_string, "rate", 4) == 0 )  { rate = 1; root = 1;  printf("Running in RATE mode\n"); }
+  else if ( strncmp(format_string, "list", 4) == 0 )  { list = 1; printf("Running in LIST mode\n"); }
+  else if ( strncmp(format_string, "gasp", 4) == 0 )  { gasp = 1; printf("Running in GASP mode\n"); }
+  else if ( strncmp(format_string, "root", 4) == 0 )  { root = 1; printf("Running in ROOT mode\n"); }
   else {
-    printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stats, root}\n",  argv[1]);
+    printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stat, root, rate}\n",  argv[1]);
     exit(0);
   } 
   
@@ -312,20 +313,20 @@ void read_config(int argc, char **argv) {
   std::cin >> runstop;
   }
   
-  else {                                //Ratemeter mode
+  //else {                                //Ratemeter mode
   // printf("How many blocks (buffers) from the end of file you want to read? \t");
   // scanf("%d", &rate_eof_blocks);
   //rate_eof_blocks = 10;
-  printf("Write data in a ROOT file? (y/n) \t");
-  scanf("%s", rate_root_string);
-  if ( strncmp(rate_root_string, "y", 1) == 0 )      root = 1; 
-  else if ( strncmp(rate_root_string, "n", 1) == 0 ) root = 0;
-  else  {
-        printf("ERROR: Bad input\n");
-        exit(0);
-      }   
-    
-  }
+  //printf("Write data in a ROOT file? (y/n) \t");
+  //scanf("%s", rate_root_string);
+  //if ( strncmp(rate_root_string, "y", 1) == 0 )      root = 1; 
+  //else if ( strncmp(rate_root_string, "n", 1) == 0 ) root = 0;
+  //else  {
+  //      printf("ERROR: Bad input\n");
+  //      exit(0);
+  //    }   
+  //  
+  //}
   
   fclose(input_file);
 
@@ -333,15 +334,6 @@ void read_config(int argc, char **argv) {
 }
 
 
-/*
------------------------------------------------------
-
-1) Numbering starts from 1
-
-2) If you don't want correlations, just delete them
-
--------------------------------------------------------
-*/
 
 
 
