@@ -5,30 +5,18 @@
 #R.Lica
 ##############################
 
-NUMBER_OF_BLOCKS=50           
-WRITE_ROOT='n'
-
-RAW_PATH='/home/TapeData/IS608/'
-CONFIG_FILE='/home/idsuser/Experiments/2017/IS608/root/conf/config_rate'   
-
-
-##############################
-
 OLD_FILE_SIZE=0              
 
 while [ 1 = 1 ] ; do
 
- INPUT_FILE="$(ls -t $RAW_PATH* | head -1)"
- NEW_FILE_SIZE=$(stat -c%s "$INPUT_FILE")
+ INPUT_FILE="$(ls -t $CURRENT_EXP/raw* | head -1)"
+ NEW_FILE_SIZE=$(stat -c%s "$CURRENT_EXP/raw/$INPUT_FILE")
 
 
  if [ $NEW_FILE_SIZE -ne $OLD_FILE_SIZE ];
 
   then
-n4i $CONFIG_FILE $INPUT_FILE << echo
-$NUMBER_OF_BLOCKS     
-$WRITE_ROOT
-echo
+xia4ids config_rate $CURRENT_EXP/raw/$INPUT_FILE
 
 rm -f n4i_Run0.LOG
 
