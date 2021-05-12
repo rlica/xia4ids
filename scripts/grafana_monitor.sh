@@ -6,6 +6,14 @@
 #	monitor | tee monitor.txt
 #
 #R. Lica, May 2021
+#Last change 12.05.2021
+
+DATABASE='https://dbod-ids-db.cern.ch:8080/write?db=ids'
+LOGIN='admin'
+PASSWORD='hello_is_it_rates_youre_looking_for'
+TABLE_NAME='pixie'
+FILENAME = "/home/pixie16/poll/monitor.txt"
+
 
 import requests
 import os
@@ -17,13 +25,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
-DATABASE='https://dbod-ids-db.cern.ch:8080/write?db=ids'
-LOGIN='admin'
-PASSWORD='hello_is_it_rates_youre_looking_for'
-TABLE_NAME='pixie'
-FILENAME = "/home/pixie16/poll/monitor.txt"
-
-
+#Handling CTRL+C, sending to InfluxDB SCRIPT=0 
 def handler(signum, frame):
     print('Exiting ...')
     requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=0', verify=False, timeout=10)
@@ -54,6 +56,12 @@ def dataString(mod, chan):
 							',DATA='	+ ('%.1f' % DATA(mod, chan)) + \
 							',TOTAL='	+ ('%.1f' % TOTAL(mod, chan)) + '\n'
 
+
+
+
+
+
+
 #Start of the script:
 requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=0', verify=False, timeout=10)
 
@@ -70,21 +78,22 @@ old_size = 0
 new_size = os.stat(FILENAME).st_size 
 
 while True:
-	
-	requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=1', verify=False, timeout=10)
-	
+		
 	if new_size != old_size:
 	
 		file = open(FILENAME)
 		lines = file.readlines()
 		file.close()
 		
-		# Check file integrity								
+		# Check monitor.txt file integrity								
 		if (len(lines) < 18 or clean_line(0)[0] != "C00"):
 			print("ERROR: Check {} file".format(FILENAME))
+			requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=0', verify=False, timeout=10)
 			#print(lines)
 			time.sleep(5)
 			continue
+			
+		requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=1', verify=False, timeout=10)
 		
 		#Get total number of modules from the number of columns written
 		MODULES = int((len(clean_line(0))-1 )/4)
@@ -119,6 +128,7 @@ while True:
 		time.sleep(3)
 	
 	else:
+		requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=2', verify=False, timeout=10)
 		new_size = os.stat(FILENAME).st_size
 		time.sleep(3)
 		
