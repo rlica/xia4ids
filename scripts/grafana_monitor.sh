@@ -17,9 +17,11 @@ FILENAME = "/home/pixie16/poll/monitor.txt"
 
 import requests
 import os
+import glob
 import time
 from datetime import datetime
 import signal
+import re
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -56,10 +58,10 @@ def dataString(mod, chan):
 							',DATA='	+ ('%.1f' % DATA(mod, chan)) + \
 							',TOTAL='	+ ('%.1f' % TOTAL(mod, chan)) + '\n'
 
-
-
-
-
+def get_run_number():
+	list_of_files = glob.glob(os.environ["CURRENT_EXP"]+'/raw/*.ldf') #Note: always update the $CURRENT_EXP env variable in .bashrc
+	latest_file = max(list_of_files, key=os.path.getctime)
+	return int(re.search('run_(\d+)', latest_file).group(1))
 
 
 #Start of the script:
@@ -92,6 +94,8 @@ while True:
 			#print(lines)
 			time.sleep(5)
 			continue
+		
+		RUNNUM = get_run_number()
 			
 		requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=1', verify=False, timeout=10)
 		
@@ -108,7 +112,7 @@ while True:
 		RUNTIME = pt.second + pt.minute*60 + pt.hour*3600
 		
 		#This is the full string of data to be sent to InfluxDB							
-		fullString = TABLE_NAME + ' RUNTIME=' + ('%s' % RUNTIME) + ',DATARATE='	+ ('%.1f' % DATARATE) + '\n'  
+		fullString = TABLE_NAME + ' RUNNUM=' + ('%s' % RUNNUM) + ',RUNTIME=' + ('%s' % RUNTIME) + ',DATARATE='	+ ('%.1f' % DATARATE) + '\n'  
 		
 		# Adding all the channels with data into a single string to post 
 		for mod in range(MODULES):
@@ -122,11 +126,12 @@ while True:
 		r = requests.post(DATABASE, auth=(LOGIN, PASSWORD), data=fullString, verify=False, timeout=10)
 		print(r)
 		
+		time.sleep(3)
+		
 		#Updating the file size
 		old_size = new_size
 		new_size = os.stat(FILENAME).st_size
-		time.sleep(3)
-	
+			
 	else:
 		requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=2', verify=False, timeout=10)
 		new_size = os.stat(FILENAME).st_size
