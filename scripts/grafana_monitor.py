@@ -3,10 +3,11 @@
 #Grafana Monitoring for XIA Pixie-16 DAQ
 #poll2 monitor script needs to be running 
 #Data taken from /home/pixie16/poll/monitor.txt using
-#	monitor | tee monitor.txt
+#the command:	'monitor | tee monitor.txt' aliased to 'monitor_txt'
+#running in the tmux session 'poll2'
 #
 #R. Lica, May 2021
-#Last change 12.05.2021
+#Last change 30.05.2021
 
 DATABASE='https://dbod-ids-db.cern.ch:8080/write?db=ids'
 LOGIN='admin'
@@ -72,7 +73,7 @@ if not os.path.exists(FILENAME):
 	print("ERROR: File {} does not exist.".format(FILENAME))
 	exit()
 
-
+#Handling 
 signal.signal(signal.SIGINT, handler)
 									
 #Reading the file size 
