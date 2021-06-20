@@ -34,7 +34,7 @@ LOGFILE = "/elog.txt" #default name for the logfile
 FOLDER = os.getenv('CURRENT_EXP')
 
 def get_run_number():
-	list_of_files = glob.glob(FOLDER+'/raw/*.ldf') #Note: always update the $CURRENT_EXP env variable in .bashrc
+	list_of_files = glob.glob(FOLDER+'/RAW/*.ldf') #Note: always update the $CURRENT_EXP env variable in .bashrc
 	latest_file = max(list_of_files, key=os.path.getctime)
 	return int(re.search('run_(\d+)', latest_file).group(1))
 
@@ -51,12 +51,13 @@ def elog_read(window, values):
 #Building the GUI window
 sg.theme('Light Blue 2')
 layout = [[sg.Text('Logfile entry:', font='Helvetica 18')],
-          [sg.Multiline(size=(70,5), key='input', do_not_clear=False)],
-          [sg.Button('RUN',  font='Helvetica 18', size=(4,2)), 
-           sg.Button('STOP', font='Helvetica 18', size=(4,2)), 
+          [sg.Multiline(size=(76,5), key='input', do_not_clear=False)],
+          [sg.Button('RUN',  button_color='sea green', font='Helvetica 18', size=(4,2)), 
+           sg.Button('STOP',  button_color='indian red', font='Helvetica 18', size=(4,2)),
+           sg.Button('STAT', font='Helvetica 18', size=(4,2)), 
            sg.Exit(font='Helvetica 18', size=(4,2)),
-		   sg.Text(size=(15, 1), font=('Helvetica', 20), background_color='white', justification='center', key='status')],
-          [sg.Multiline(size=(70,30), autoscroll=True, key='output')],
+		   sg.Text(size=(14, 1), font=('Helvetica', 20), background_color='white', justification='center', key='status')],
+          [sg.Multiline(size=(76,30), autoscroll=True, key='output')],
           [sg.Text('Exp. folder', size=(10, 1),font='Helvetica 14'), 
            sg.Input(default_text = FOLDER, key='folder'), 
            sg.FolderBrowse(initial_folder = FOLDER)],
@@ -74,15 +75,27 @@ while True:
 	if event == 'RUN':
 		subprocess.run(['/bin/bash', '-i', '-c', 'pixie_start'])
 		time.sleep(1)
-		window['status'].update("Running #%d" % get_run_number(), background_color='green')
+		window['status'].update("Running #%d" % get_run_number(), background_color='sea green')
 		elog_new_entry(values, 'Started')
 		elog_read(window, values)
 		
 	if event == 'STOP':
 		subprocess.run(['/bin/bash', '-i', '-c', 'pixie_stop'])
 		time.sleep(1)
-		window['status'].update("Stopped #%d" % get_run_number(), background_color='red')
+		window['status'].update("Stopped #%d" % get_run_number(), background_color='indian red')
 		elog_new_entry(values, 'Stopped')
 		elog_read(window, values)
 		
+	if event == 'STAT':
+		status_message = subprocess.check_output(['/bin/bash', '-i', '-c', 'pixie_status']).decode("utf-8")
+		acq_running = status_message.split()[28]
+		if acq_running == 'Yes':
+			window['status'].update("Running #%d" % get_run_number(), background_color='sea green')
+		elif acq_running == 'No':
+			window['status'].update("Stopped #%d" % get_run_number(), background_color='indian red')
+		else:
+			window['status'].update("No status #%d" % get_run_number())
+			 
+		elog_read(window, values)
+			
 window.close()

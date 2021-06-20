@@ -60,7 +60,7 @@ def dataString(mod, chan):
 							',TOTAL='	+ ('%.1f' % TOTAL(mod, chan)) + '\n'
 
 def get_run_number():
-	list_of_files = glob.glob(os.environ["CURRENT_EXP"]+'/raw/*.ldf') #Note: always update the $CURRENT_EXP env variable in .bashrc
+	list_of_files = glob.glob(os.environ["CURRENT_EXP"]+'/RAW/*.ldf') #Note: always update the $CURRENT_EXP env variable in .bashrc
 	latest_file = max(list_of_files, key=os.path.getctime)
 	return int(re.search('run_(\d+)', latest_file).group(1))
 
