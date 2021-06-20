@@ -1,12 +1,11 @@
 
 //In correlation mode, we need to delay the stop (stop = secondCh,secondMod)
 //The start is always the same reference and should not be used as stop
+// The time spectra are in digitizer time units (4ns)
 
 
 void correlations() {
 	
-	//corr_unit = ref_unit;
-
   
   for (j=0; j<corr; j++) {
 
@@ -24,9 +23,9 @@ void correlations() {
 				    DataArray[k+l].modnum == secondMod[j] && 
 				    DataArray[k+l].energy > 0 && 
 				    DataArray[k+l].energy < 16384 && 
-				   (DataArray[k+l].time - DataArray[k].time) / (int)corr_unit < RANGE  ) {
+				   (DataArray[k+l].time - DataArray[k].time) < RANGE  ) {
 				  
-					corr_hist[j][ (DataArray[k+l].time - DataArray[k].time)/ (int)corr_unit ]++;
+					corr_hist[j][(DataArray[k+l].time - DataArray[k].time)]++;
 					m++;
 					
 				}
@@ -50,7 +49,7 @@ void correlations() {
 	for (z=0; z<RANGE; z++)  if (corr_hist[j][z] > ymax) { ymax = corr_hist[j][z]; xmax=z; }
 	
 	//fprintf(syncstat, "R%d_C%dM%d-C%dM%d: Ymax = %d at Xmax = %d\n", runnum, firstCh, firstMod, secondCh, secondMod, ymax, xmax);
-	printf("R%d_M%dC%d-M%dC%d.txt|a:8\t Ymax = %d\t Xmax = %d\n", runnumber, firstMod[j], firstCh[j], secondMod[j], secondCh[j],  ymax, xmax);
+	printf("R%d_M%dC%d-M%dC%d.txt|a:8\t Ymax = %d\t Xmax = %d \n", runnumber, firstMod[j], firstCh[j], secondMod[j], secondCh[j],  ymax, xmax);
 	
 	}
 	printf("-------------------\n");

@@ -306,7 +306,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
 		if (corr > 0)
 			for (j=0; j<corr; j++)
 				if (DataArray[iData].chnum == secondCh[j] && DataArray[iData].modnum == secondMod[j])
-					DataArray[iData].time += CORR_DELAY*(int)corr_unit;
+					DataArray[iData].time += CORR_DELAY;
 					
 		iData++;
 		 

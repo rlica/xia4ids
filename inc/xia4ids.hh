@@ -64,7 +64,7 @@ typedef struct GaspRecHeader {
   char outname[1000];
   char runname[1000];
   char ref_string[10], run_string[10], format_string[100], rate_root_string[1];
-  unsigned long long int ref_unit, run_unit, corr_unit=1;
+  unsigned long long int ref_unit, run_unit;
   int i, j, k, l, m, n, e, z,
       iData = 0, iEvt, totEvt,
       runstart, runnumber, runstop, runpart,

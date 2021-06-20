@@ -12,7 +12,7 @@ void write_correlations() {
 	
 	    int ymax=0, xmax=0;
 	    
-	    sprintf(outname, "R%d_M%dC%d-M%dC%d.txt", runnumber-1, firstMod[j], firstCh[j], secondMod[j], secondCh[j]);	
+	    sprintf(outname, "R%d_M%dC%d-M%dC%d.txt", runnumber, firstMod[j], firstCh[j], secondMod[j], secondCh[j]);	
 	    fp_out=fopen(outname, "wt");
 	    
 	    for (z=0; z<RANGE; z++) {
@@ -21,7 +21,7 @@ void write_correlations() {
 	      corr_hist[j][z]=0; //it's nice to zero the data for the next run
 	    }
 	    
-	    fprintf(syncstat, "R%d_M%dC%d-M%dC%d\t Ymax = %d\t Xmax = %d\n", runnumber-1, firstMod[j], firstCh[j], secondMod[j], secondCh[j], ymax, xmax);
+	    fprintf(syncstat, "R%d_M%dC%d-M%dC%d\t Ymax = %d\t Xmax = %d\n", runnumber, firstMod[j], firstCh[j], secondMod[j], secondCh[j], ymax, xmax);
 	    
 
 	  }
