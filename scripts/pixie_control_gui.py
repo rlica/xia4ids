@@ -4,7 +4,7 @@
 #poll2 needs to be running in tmux
 #
 #R. Lica, May 2021
-#Last change 20.06.2021
+#Last change 24.06.2021
 
 #Prerequisites:
 #pip3 install pysimplegui
