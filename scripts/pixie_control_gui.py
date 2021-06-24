@@ -16,7 +16,9 @@
 ### alias pixie_start="tmux send-keys -t poll2:1.0 \"run\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0"
 ### alias pixie_stop="tmux send-keys -t poll2:1.0 \"stop\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0"
 ### export CURRENT_EXP=/Data_Dir/2021/Tests_SiPIN_Apr2021
-### the raw data should be placed in $CURRENT_EXP/RAW/
+
+### The raw data should be placed in $CURRENT_EXP/RAW/
+### There is a function in .bashr to create new exp folders: 'new_exp_folder'
 
 ### The code will save automatically the current.set from ~/poll/ in $CURRENT_EXP/RAW/  
 
