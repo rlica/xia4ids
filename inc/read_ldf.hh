@@ -293,6 +293,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
         DataArray[iData].modnum = decodedEvent->GetModuleNumber();
         DataArray[iData].energy = calibrate(decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetEnergy());
         DataArray[iData].time	= decodedEvent->GetTime() + delay[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()];
+        //printf("time = %lf \t %lf \n",  decodedEvent->GetTime(), decodedEvent->GetCfdFractionalTime());
         
         //Filling ROOT Histogram
 		if (root == 1 && corr == 0) {

@@ -4,7 +4,7 @@
 #poll2 needs to be running in tmux
 #
 #R. Lica, May 2021
-#Last change 22.05.2021
+#Last change 20.06.2021
 
 #Prerequisites:
 #pip3 install pysimplegui
@@ -16,8 +16,9 @@
 ### alias pixie_start="tmux send-keys -t poll2:1.0 \"run\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0"
 ### alias pixie_stop="tmux send-keys -t poll2:1.0 \"stop\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0"
 ### export CURRENT_EXP=/Data_Dir/2021/Tests_SiPIN_Apr2021
-### the raw data should be placed in CURRENT_EXP/RAW/
+### the raw data should be placed in $CURRENT_EXP/RAW/
 
+### The code will save automatically the current.set from ~/poll/ in $CURRENT_EXP/RAW/  
 
 
 import sys
@@ -28,6 +29,7 @@ import subprocess
 import time
 from datetime import datetime
 import PySimpleGUI as sg
+from shutil import copyfile
 
 
 
@@ -55,9 +57,9 @@ layout = [[sg.Text('Logfile entry:', font='Helvetica 18')],
           [sg.Multiline(size=(76,5), key='input', do_not_clear=False)],
           [sg.Button('RUN',  button_color='sea green', font='Helvetica 18', size=(4,2)), 
            sg.Button('STOP',  button_color='indian red', font='Helvetica 18', size=(4,2)),
+           sg.Text(size=(14, 1), font=('Helvetica', 20), background_color='white', justification='center', key='status'),
            sg.Button('STAT', font='Helvetica 18', size=(4,2)), 
-           sg.Exit(font='Helvetica 18', size=(4,2)),
-		   sg.Text(size=(14, 1), font=('Helvetica', 20), background_color='white', justification='center', key='status')],
+           sg.Exit(font='Helvetica 18', size=(4,2))],
           [sg.Multiline(size=(76,30), autoscroll=True, key='output')],
           [sg.Text('Exp. folder', size=(10, 1),font='Helvetica 14'), 
            sg.Input(default_text = FOLDER, key='folder'), 
@@ -76,9 +78,11 @@ while True:
 	if event == 'RUN':
 		subprocess.run(['/bin/bash', '-i', '-c', 'pixie_start'])
 		time.sleep(1)
-		window['status'].update("Running #%d" % get_run_number(), background_color='sea green')
+		run_number = get_run_number()
+		window['status'].update("Running #%d" % run_number, background_color='sea green')
 		elog_new_entry(values, 'Started')
 		elog_read(window, values)
+		copyfile('/home/pixie16/poll/current.set', FOLDER+'/Run%d.set' % run_number)
 		
 	if event == 'STOP':
 		subprocess.run(['/bin/bash', '-i', '-c', 'pixie_stop'])
@@ -88,8 +92,8 @@ while True:
 		elog_read(window, values)
 		
 	if event == 'STAT':
-		status_message = subprocess.check_output(['/bin/bash', '-i', '-c', 'pixie_status']).decode("utf-8")
-		acq_running = status_message.split()[28]
+		status_message_list = subprocess.check_output(['/bin/bash', '-i', '-c', 'pixie_status']).decode("utf-8").split()
+		acq_running = status_message_list[status_message_list.index('running')+2]
 		if acq_running == 'Yes':
 			window['status'].update("Running #%d" % get_run_number(), background_color='sea green')
 		elif acq_running == 'No':
