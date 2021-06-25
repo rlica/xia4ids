@@ -36,7 +36,7 @@ def handler(signum, frame):
 
 #Reading only the last entries in the file
 def clean_line(chan):
-	return lines[chan-18].replace("k", "E3").replace("|", " ").split()
+	return lines[chan-18].replace("k", "E3").replace("M", "E6").replace("|", " ").split()
 
 def ICR(mod, chan):
 	return float(clean_line(chan)[1+mod*4])
