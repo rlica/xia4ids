@@ -1,0 +1,65 @@
+---------- IDS Specific info -------------------------------------------------------------------------------------
+
+1. $CURRENT_EXP path should be updated from ~/.bashrc: e.g. export CURRENT_EXP=/Data_Dir/2021/IS622/
+2. 'grafana_monitor' should be always running in 'screen'. 
+	Grafana servers available at: 	http://ids-monitor:3000/ (CERN Network only) and 
+					https://ids-status.web.cern.ch/ (accessible everywhere with CERN login) 
+3. Always run "poll2" and "monitor_txt" in "tmux". 
+- Open tmux session: tmux new -s poll2
+	Open vertical pane: Ctrl+A % 
+	Open horizontal pane: Ctrl+A " 
+	Dettach session: ctrl+A D
+	Re-attach session: tmux attach -t poll2
+- Both 'poll2' and 'monitor_txt' must be started from ~/poll folder
+- Always set raw data folder to $CURRENT_EXP/RAW/ in poll2 using 'fdir'
+- poll2 must run in 1.0 pane (indicator at the bottom of the window) for the pixie_control_gui.py to work 
+
+4. Automatic data backup to CERN EOS should be started by root user (su) in 'screen'. 
+	Script backup_to_EOS.sh located in /Data_Dir/2021/. Only 'su' has access.
+ 
+5. Simple DAQ Control and e-log: 'pixie_control_gui.py' (script located in /home/pixie/programs/xia4ids/scripts)
+
+6. Sort files using 'xia4ids' in $CURRENT_EXP/ONLINE/. Help here: https://github.com/rlica
+
+-------------------------------------------------------------------------------------------------------------------
+
+Useful commands and tricks for poll2:
+
+fdir /set/your/output/directory/RAW
+
+adjust_offsets -1
+
+thresh 20
+
+toggle 0 4:11 gain   // This changes the gain bit in CHAN_CSRA.
+
+adjust_offsets 0
+
+Traces: 
+toggle 0 0 trace
+pwrite 0 0 TRACE_DELAY 0.500
+pwrite 0 0 TRACE_LENGTH 5.5
+timedrun ttk_test_traces
+prefix ttk_test_traces // Set output file prefix
+
+timedrun 30 // Set running time and run
+
+pwrite 1 -1 TRIGGER_THRESHOLD 1000
+
+startvme // run without writing to ldf file(?)
+
+Robert: For LaBr3 i artificially changed the gain by changing TAU from 0.01 to 0.02.
+
+Scan + damm:
+utkscanor xxx -c Config-IDS_RG02.xml 
+and then
+file run_032.ldf (which is the symlink to one of the random files, which you generated).
+The xml file has definition of parameters in pixie modules and callouts to some standard processors.
+You can view the spectra using damm:
+damm
+fig 11
+in xxx.his
+d 17
+(raw spectra are number as follows N=[mod-number]*16+chan_number)
+17=1*16+1
+Counters are in the N+600 files.
