@@ -17,12 +17,12 @@ void correlations() {
 			        DataArray[k].modnum == firstMod[j] && 
 			        k+l<iData && 
 			        DataArray[k].energy > 0 && 
-			        DataArray[k].energy < 16384) {
+			        DataArray[k].energy < 65536) {
 				 
 				if (DataArray[k+l].chnum  == secondCh[j] && 
 				    DataArray[k+l].modnum == secondMod[j] && 
 				    DataArray[k+l].energy > 0 && 
-				    DataArray[k+l].energy < 16384 && 
+				    DataArray[k+l].energy < 65536 && 
 				   (DataArray[k+l].time - DataArray[k].time) < RANGE  ) {
 				  
 					corr_hist[j][(DataArray[k+l].time - DataArray[k].time)]++;

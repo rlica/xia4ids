@@ -7,7 +7,6 @@
 
 #include <string>
 #include <utility>
-#include <iostream>
 
 #include "HelperEnumerations.hpp"
 
@@ -30,8 +29,8 @@ public:
     ///@param[in] firmware : The value we want to set for the firmware
     ///@param[in] freq : The value in MS/s or MHz that we want to assign to the
     /// frequency.
-    XiaListModeDataMask(const DataProcessing::FIRMWARE& firmware,
-        const unsigned int& freq) {
+    XiaListModeDataMask(const DataProcessing::FIRMWARE &firmware,
+                        const unsigned int &freq) {
         firmware_ = firmware;
         frequency_ = freq;
     }
@@ -40,8 +39,8 @@ public:
     ///@param[in] firmware : The value we want to set for the firmware
     ///@param[in] freq : The value in MS/s or MHz that we want to assign to the
     /// frequency.
-    XiaListModeDataMask(const std::string& firmware,
-        const unsigned int& freq) {
+    XiaListModeDataMask(const std::string &firmware,
+                        const unsigned int &freq) {
         firmware_ = ConvertStringToFirmware(firmware);
         frequency_ = freq;
     }
@@ -142,29 +141,28 @@ public:
 
     ///Sets the firmware version
     ///@param[in] firmware : The firmware type that we would like to set.
-    void SetFirmware(const DataProcessing::FIRMWARE& firmware) {
-        std::cout << "Setting firmware (using FIRMWARE)!" << std::endl;
+    void SetFirmware(const DataProcessing::FIRMWARE &firmware) {
         firmware_ = firmware;
     }
 
     ///Sets the firmware version
     ///@param[in] type : The string that we are going to convert to the
     /// more useful FIRMWARE enum.
-    void SetFirmware(const std::string& type) {
+    void SetFirmware(const std::string &type) {
         firmware_ = ConvertStringToFirmware(type);
     };
 
     ///Sets the frequency of the module that we are working with.
     ///@param[in] freq : The frequency of the module in MS/s or MHz that we
     /// are working with.
-    void SetFrequency(const unsigned int& freq) { frequency_ = freq; }
+    void SetFrequency(const unsigned int &freq) { frequency_ = freq; }
 
     ///Converts a string to a firmware version this is used to set the
     /// firmware using SetFirmware(string) method.
     ///@param[in] type : A string of the firmware version that we would like.
     /// It can be prepended with the "R" or not.
     ///@return The firmware ENUM for the firmware type.
-    DataProcessing::FIRMWARE ConvertStringToFirmware(const std::string& type);
+    DataProcessing::FIRMWARE ConvertStringToFirmware(const std::string &type);
 
 private:
     ///The firmware version that we are using.
@@ -172,7 +170,7 @@ private:
     ///The frequency of the module that we want to decode.
     unsigned int frequency_;
 
-    std::string BadMaskErrorMessage(const std::string& func) const;
+    std::string BadMaskErrorMessage(const std::string &func) const;
 };
 
 #endif //PIXIESUITE_XIALISTMODEDATAMASK_HPP

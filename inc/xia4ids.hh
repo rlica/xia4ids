@@ -23,8 +23,8 @@
 #define  S 250000000
 
 //correlation prompt delay and histogram range
-#define CORR_DELAY 4000
-#define RANGE      8000
+#define CORR_DELAY 30000
+#define RANGE      60000
 
 //progress bar specs
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||"  

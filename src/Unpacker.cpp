@@ -94,9 +94,9 @@ int Unpacker::DecodeBuffer(std::vector<XiaData*>& result, unsigned int* buf, con
     // Using the defined map from vsn to (firmware, frequency), set firmware and frequency to the mask object.
     if (maskMap_.size() != 0) {
         auto found = maskMap_.find(vsn);
-        if (found == maskMap_.end())
-            throw invalid_argument("Unpacker::ReadBuffer - Unable to locate VSN = " + to_string(vsn)
-                + " in the maskMap. Ensure that it's defined in your configuration file!");
+//        if (found == maskMap_.end())
+//            throw invalid_argument("Unpacker::ReadBuffer - Unable to locate VSN = " + to_string(vsn)
+//                + " in the maskMap. Ensure that it's defined in your configuration file!");
         mask_.SetFirmware((*found).second.first);
         mask_.SetFrequency((*found).second.second);
         if (debug_mode)
@@ -236,6 +236,8 @@ unsigned int Unpacker::DecodeWordThree(const unsigned int& word, XiaData& data,
 void Unpacker::InitializeMaskMap() {
     maskMap_.insert(make_pair(0, make_pair("42950", 250)));
     maskMap_.insert(make_pair(1, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(2, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(3, make_pair("42950", 250)));
 }
 
 pair<double, double> Unpacker::CalculateTimeInSamples(const XiaListModeDataMask& mask,

@@ -63,7 +63,7 @@ void event_builder() {
       //m = number of signals inside the cluster
 	while ( m <= detnum && k+m < iData-1 && DataArray[k+m].time - DataArray[k].time < timegate ) {
 		//Fix the energy to be not higher than 16000:
-		if (DataArray[k+m].energy > 16383) DataArray[k+m].energy = 16383; 
+		if (DataArray[k+m].energy > 65535) DataArray[k+m].energy = 65535; 
       
         //if ref is inside an event we need to update the information about it
 		if (reftype !=0 && tmc[DataArray[k+m].modnum][DataArray[k+m].chnum] == reftype) 

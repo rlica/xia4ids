@@ -1,0 +1,49 @@
+runName    /home/pixie16/Data_Dir/2021/IS622/tests/RAW/run_
+timegate   1000
+cs-tac     0
+pair-tac   0
+reftype    0
+flagtype   0
+ref_unit   1 ms
+run_unit   10 s
+Format     root
+Fold       1
+
+
+|Index	|Type	|Mod	|Chan	|Delay	|Link	|Start	|Stop	|Comment
+1		1		0		0		0       0		0		0		Pulser
+2		1		1		0   	0		0		0		0		Pulser 
+1		2		1		1   	0		0		0		0		BetaPMT 
+1		3		1		2   	0		0		0		0		BetaSiPM
+1		4		1		3   	0		0		0		0		LaBr
+1		5		1		4   	0		0		0		0		CFD_BetaPMT
+1		6		1		5   	0		0		0		0		CFD_BetaSiPM
+1		7		1		6   	0		0		0		0		CFD_LaBr
+1		8		1		7   	0		0		0		0		TAC_PMT
+1		9		1		8   	0		0		0		0		TAC_SiPM
+
+
+
+----
+Correlations
+0	1	1	0
+
+
+
+--- Comments below ---
+
+!!! Detector Index and Type numbering starts from 1 !!!
+!!! Module and Channel numbering starts from 0      !!!
+!!! Readme: https://github.com/rlica/xia4ids		!!!
+
+LEGEND
+-----------------------------
+Type 
+1=Clover Crystal
+2=LaBr
+3=Beta
+4=Pair TAC (La-La)
+5=Common start TAC (Beta-La)
+6=Proton T1
+------------------------------
+

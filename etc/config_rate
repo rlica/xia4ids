@@ -6,7 +6,7 @@ reftype    0
 flagtype   0
 ref_unit   1 ms
 run_unit   10 s
-Format     gasp
+Format     rate
 Fold       1
 
 

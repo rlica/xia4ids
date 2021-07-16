@@ -253,22 +253,19 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     
     XiaData* decodedEvent;
     //ofstream myfile;
-    //myfile.open("Parsing results.txt");
+    //myfile.open("Parsing_results.txt");
     
     for (int i = 0; i < decodedList_.size(); i++) {
         
         decodedEvent = decodedList_[i];
-        
-        //if (i != 0) {
-            //myfile << "\n \n";
-        //}
-        //myfile << "Decoded event number " << i << ".\n";
-        //myfile << "Event energy: " << decodedEvent->GetEnergy() << ".\n";
-        //myfile << "Time stamp: " << decodedEvent->GetTime() << ".\n";
-        //myfile << "Channel number: " << decodedEvent->GetChannelNumber() << ".\n";
-        //myfile << "Module number: " << decodedEvent->GetModuleNumber() << ".\n";
-        //myfile << "Pileup flag: " << decodedEvent->IsPileup() << ".\n";
-        //myfile << "Out-of-range (saturated) flag: " << decodedEvent->IsSaturated() << ".\n";
+              
+        //myfile << "Decoded event number " << i << "\t";
+        //myfile << "Event energy: " << decodedEvent->GetEnergy() << "\t";
+        //myfile << "Time stamp: " << (long long int)decodedEvent->GetTime() << "\t";
+        //myfile << "Channel number: " << decodedEvent->GetChannelNumber() << "\t";
+        //myfile << "Module number: " << decodedEvent->GetModuleNumber() << "\t";
+        //myfile << "Pileup flag: " << decodedEvent->IsPileup() << "\t";
+        //myfile << "Out-of-range (saturated) flag: " << decodedEvent->IsSaturated() << "\n";
 
 
 		//Storing only data from ADCs defined in config
@@ -293,7 +290,9 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
         DataArray[iData].modnum = decodedEvent->GetModuleNumber();
         DataArray[iData].energy = calibrate(decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetEnergy());
         DataArray[iData].time	= decodedEvent->GetTime() + delay[decodedEvent->GetModuleNumber()][decodedEvent->GetChannelNumber()];
-        //printf("time = %lf \t %lf \n",  decodedEvent->GetTime(), decodedEvent->GetCfdFractionalTime());
+        
+        
+        // printf("mod = %d \t chan = %d \t time = %lf \t %lf \n", decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetTime(), decodedEvent->GetCfdFractionalTime());
         
         //Filling ROOT Histogram
 		if (root == 1 && corr == 0) {

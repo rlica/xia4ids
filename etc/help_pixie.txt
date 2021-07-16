@@ -15,11 +15,15 @@
 - poll2 must run in 1.0 pane (indicator at the bottom of the window) for the pixie_control_gui.py to work 
 
 4. Automatic data backup to CERN EOS should be started by root user (su) in 'screen'. 
-	Script backup_to_EOS.sh located in /Data_Dir/2021/. Only 'su' has access.
+- Script backup_to_EOS.sh located in /Data_Dir/2021/. Only 'su' has access.
  
 5. Simple DAQ Control and e-log: 'pixie_control_gui.py' (script located in /home/pixie/programs/xia4ids/scripts)
 
 6. Sort files using 'xia4ids' in $CURRENT_EXP/ONLINE/. Help here: https://github.com/rlica
+- The $CURRENT_EXP/ONLINE/conf folder contains all the necessary configuration files for 
+converting data to ROOT or GASPWare
+- $CURRENT_EXP/ONLINE/cal folder contains all the calibration files
+- 'Autosort' files are used for quasi-automatic sorting of data
 
 -------------------------------------------------------------------------------------------------------------------
 
@@ -47,6 +51,11 @@ timedrun 30 // Set running time and run
 pwrite 1 -1 TRIGGER_THRESHOLD 1000
 
 startvme // run without writing to ldf file(?)
+
+save x.set // save current settings to a binary file readable by poll2
+dump x.txt // save all settings as a text file 
+
+
 
 Robert: For LaBr3 i artificially changed the gain by changing TAU from 0.01 to 0.02.
 
