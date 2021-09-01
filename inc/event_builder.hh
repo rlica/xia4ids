@@ -165,9 +165,9 @@ void event_builder() {
 		else    //signals for which we have ref
 			lrt_ref =    (DataArray[k].time-tref)/ref_unit;
 		
-		if (lrt_ref > 8191) { //Fix LRT not higher than 8192:
+		if (lrt_ref > 8000) { //Fix LRT not higher than 8192:
 			//printf("\n LRT Overflow Warning: Reference time > 8192 - Increase the ref_unit value\r");
-			lrt_ref = 8191;
+			lrt_ref = 8000;
 		} 
       
     
