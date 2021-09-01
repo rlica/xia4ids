@@ -39,7 +39,7 @@ void define_root() {
   for (i = 0; i < detnum; i++)
      h[i] = new TH1F(Form("h%d_%s", i, comment_string[i]),
                      Form("%s_Singles", comment_string[i]),
-                     16384, 1, 16384);
+                     65535, 1, 65536);
      
      
   

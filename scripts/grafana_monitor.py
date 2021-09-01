@@ -105,8 +105,11 @@ while True:
 		
 		#Get datarate
 		DATARATE = float(clean_line(16)[5])
-		if clean_line(16)[6] == 'MB/s':  #usually it is kB/s
+		if clean_line(16)[6] == 'E6B/s':  #usually it is kB/s
 			DATARATE = DATARATE*1000
+		
+		if clean_line(16)[6] == 'B/s':  #usually it is kB/s
+			DATARATE = DATARATE/1000
 		
 		#Get total RUNTIME in seconds
 		pt = datetime.strptime(clean_line(16)[2],'%H:%M:%S.%f')
