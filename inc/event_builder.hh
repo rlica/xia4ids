@@ -15,6 +15,7 @@ void event_builder() {
   k=0;
   int index;
   int evSize=0;
+  int timestamp_overflow = 8000;
   uint64_t sum=0;
   uint16_t hrt[detnum+1], 
            lrt_run = 1, lrt_ref = 1,
@@ -152,22 +153,22 @@ void event_builder() {
 		
 		//Timestamp in run_unit units
 		lrt_run = 1 + (DataArray[k].time-first_ts)/run_unit;
-		if (lrt_run > 8191) { //Fix LRT higher than 8192:
+		if (lrt_run > timestamp_overflow) { //Fix LRT higher than 8192:
 			// printf("\n LRT Overflow Warning: Run timestamp > 8192 - Increase the run_unit value\n");
-			lrt_run = 8191;
+			lrt_run = timestamp_overflow;
 		}
 		
 		//Reference vs proton pulse
 		if (reftype == 0)  // we don't take the reference time
 			lrt_ref = 0;
 		else if (reftype > 0 && tref == 0)   //signals at the beginning of data for which we don't have reference information
-			lrt_ref = 8191;
+			lrt_ref = timestamp_overflow;
 		else    //signals for which we have ref
 			lrt_ref =    (DataArray[k].time-tref)/ref_unit;
 		
-		if (lrt_ref > 8000) { //Fix LRT not higher than 8192:
+		if (lrt_ref > timestamp_overflow) { //Fix LRT not higher than 8192:
 			//printf("\n LRT Overflow Warning: Reference time > 8192 - Increase the ref_unit value\r");
-			lrt_ref = 8000;
+			lrt_ref = timestamp_overflow;
 		} 
       
     
