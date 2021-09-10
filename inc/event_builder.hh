@@ -16,6 +16,7 @@ void event_builder() {
   int index;
   int evSize=0;
   int timestamp_overflow = 8000;
+  int energy_overflow = 60000;
   uint64_t sum=0;
   uint16_t hrt[detnum+1], 
            lrt_run = 1, lrt_ref = 1,
@@ -63,8 +64,8 @@ void event_builder() {
       //finding clusters of data
       //m = number of signals inside the cluster
 	while ( m <= detnum && k+m < iData-1 && DataArray[k+m].time - DataArray[k].time < timegate ) {
-		//Fix the energy to be not higher than 16000:
-		if (DataArray[k+m].energy > 65535) DataArray[k+m].energy = 65535; 
+		//Fix the energy to be not higher than energy_overflow:
+		if (DataArray[k+m].energy > energy_overflow) DataArray[k+m].energy = energy_overflow; 
       
         //if ref is inside an event we need to update the information about it
 		if (reftype !=0 && tmc[DataArray[k+m].modnum][DataArray[k+m].chnum] == reftype) 

@@ -6,7 +6,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "XiaListModeDataMask.hpp"
+#include "XiaListModeDataMask.h"
 
 using namespace std;
 using namespace DataProcessing;
