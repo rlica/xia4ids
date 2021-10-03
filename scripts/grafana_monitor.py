@@ -112,8 +112,10 @@ while True:
 			DATARATE = DATARATE/1000
 		
 		#Get total RUNTIME in seconds
-		pt = datetime.strptime(clean_line(16)[2],'%H:%M:%S.%f')
-		RUNTIME = pt.second + pt.minute*60 + pt.hour*3600
+		#datetime.strptime(clean_line(16)[2],'%H:%M:%S.%f') does not understand >24h, therefore we need to split the hours from the rest
+		hours, rest = clean_line(16)[2].split(':', 1)
+		pt = datetime.strptime(rest,'%M:%S.%f')
+		RUNTIME = pt.second + pt.minute*60 + int(hours)*3600
 		
 		#This is the full string of data to be sent to InfluxDB							
 		fullString = TABLE_NAME + ' RUNNUM=' + ('%s' % RUNNUM) + ',RUNTIME=' + ('%s' % RUNTIME) + ',DATARATE='	+ ('%.1f' % DATARATE) + '\n'  
