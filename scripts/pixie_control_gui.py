@@ -3,8 +3,8 @@
 #Simple XIA Pixie-16 DAQ GUI
 #poll2 needs to be running in tmux
 #
-#R. Lica, May 2021
-#Last change 24.06.2021
+#R. Lica, 2021
+#Last change 06.10.2021
 
 #Prerequisites:
 #pip3 install pysimplegui
@@ -15,12 +15,16 @@
 ### alias pixie_status="tmux send-keys -t poll2:1.0 \"status\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0"
 ### alias pixie_start="tmux send-keys -t poll2:1.0 \"run\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0"
 ### alias pixie_stop="tmux send-keys -t poll2:1.0 \"stop\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0"
-### export CURRENT_EXP=/Data_Dir/2021/Tests_SiPIN_Apr2021
+### export CURRENT_EXP=/Data_Dir/2021/the_current_exp_folder
 
 ### The raw data should be placed in $CURRENT_EXP/RAW/
 ### There is a function in .bashr to create new exp folders: 'new_exp_folder'
 
-### The code will save automatically the current.set from ~/poll/ in $CURRENT_EXP/RAW/  
+### The code will perform the following operations:
+### - start/stop the Pixie DAQ
+### - save the run information in the $CURRENT_EXP/elog.txt file together with other comments inserted by the user
+### - send the comments also to the InlufxDB database to be displayed in Grafana
+### - save automatically the current.set from ~/poll/ in $CURRENT_EXP/RAW/  
 
 
 import sys
@@ -32,8 +36,17 @@ import time
 from datetime import datetime
 import PySimpleGUI as sg
 from shutil import copyfile
+import requests
 
+### Needed for Grafana
+DATABASE='https://dbod-ids-db.cern.ch:8080/write?db=ids'
+LOGIN='admin'
+PASSWORD='hello_is_it_rates_youre_looking_for'
+TABLE_NAME='pixie'
 
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+### 
 
 LOGFILE = "/elog.txt" #default name for the logfile 
 FOLDER = os.getenv('CURRENT_EXP')
@@ -52,6 +65,13 @@ def elog_new_entry(values, string):
 def elog_read(window, values):
 	with open(values['folder']+LOGFILE, 'r') as file_object:
 		window['output'].update(file_object.read())
+		
+def grafana_new_entry(values):
+	# Sending elog entry string to InfluxDB
+	fullString = TABLE_NAME + ' ELOG="' + ('%s' % values['input']) + '"\n'  
+	r = requests.post(DATABASE, auth=(LOGIN, PASSWORD), data=fullString, verify=False, timeout=10)
+	print(r)
+	
 
 #Building the GUI window
 sg.theme('Light Blue 2')
@@ -83,14 +103,17 @@ while True:
 		run_number = get_run_number()
 		window['status'].update("Running #%d" % run_number, background_color='sea green')
 		elog_new_entry(values, 'Started')
+		grafana_new_entry(values)
 		elog_read(window, values)
 		copyfile('/home/pixie16/poll/current.set', FOLDER+'/Run%d.set' % run_number)
+		
 		
 	if event == 'STOP':
 		subprocess.run(['/bin/bash', '-i', '-c', 'pixie_stop'])
 		time.sleep(1)
 		window['status'].update("Stopped #%d" % get_run_number(), background_color='indian red')
 		elog_new_entry(values, 'Stopped')
+		grafana_new_entry(values)
 		elog_read(window, values)
 		
 	if event == 'STAT':
