@@ -4,7 +4,7 @@
 #poll2 needs to be running in tmux
 #
 #R. Lica, 2021
-#Last change 06.10.2021
+#Last change 08.10.2021
 
 #Prerequisites:
 #pip3 install pysimplegui
@@ -66,9 +66,9 @@ def elog_read(window, values):
 	with open(values['folder']+LOGFILE, 'r') as file_object:
 		window['output'].update(file_object.read())
 		
-def grafana_new_entry(values):
+def grafana_new_entry(values, run_number, status):
 	# Sending elog entry string to InfluxDB
-	fullString = TABLE_NAME + ' ELOG="' + ('%s' % values['input']) + '"\n'  
+	fullString = TABLE_NAME + ' ELOG_RUN=' + ('%d' % run_number) + ',ELOG="' + ('%s' % status+values['input']) + '"\n'  
 	r = requests.post(DATABASE, auth=(LOGIN, PASSWORD), data=fullString, verify=False, timeout=10)
 	print(r)
 	
@@ -103,18 +103,18 @@ while True:
 		run_number = get_run_number()
 		window['status'].update("Running #%d" % run_number, background_color='sea green')
 		elog_new_entry(values, 'Started')
-		grafana_new_entry(values)
 		elog_read(window, values)
 		copyfile('/home/pixie16/poll/current.set', FOLDER+'/Run%d.set' % run_number)
-		
+		grafana_new_entry(values, run_number, 'Started. ')
 		
 	if event == 'STOP':
 		subprocess.run(['/bin/bash', '-i', '-c', 'pixie_stop'])
 		time.sleep(1)
+		run_number = get_run_number()
 		window['status'].update("Stopped #%d" % get_run_number(), background_color='indian red')
 		elog_new_entry(values, 'Stopped')
-		grafana_new_entry(values)
 		elog_read(window, values)
+		grafana_new_entry(values, run_number, 'Stopped. ')
 		
 	if event == 'STAT':
 		status_message_list = subprocess.check_output(['/bin/bash', '-i', '-c', 'pixie_status']).decode("utf-8").split()
