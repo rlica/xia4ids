@@ -43,6 +43,8 @@ Parts of this code were modified from Pixie Acquisition and Analysis Software Su
 
 See the 'etc' folder for some examples of different configuration and calibration files.
 
+To test the code, a raw data file from 152Eu source and configuration file cand be downloaded from: 
+https://cernbox.cern.ch/index.php/s/1C5pXrtTSCdneZm
 
 #### ROOT format:
 
