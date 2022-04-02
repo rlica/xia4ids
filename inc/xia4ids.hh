@@ -32,7 +32,8 @@
 
 typedef struct dataStruct { 
   uint64_t  time;
-  short int energy;
+  //short int energy;
+  double energy;
   short int chnum;
   short int modnum;
 } dataStruct;
@@ -128,7 +129,8 @@ TFile *rootfile;
 TTree *tree;
 TH1F *hStats, *h[MAX_NUM_DET];
 
-int   E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
+double E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET];
+int   //E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
       T_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
       M_branch[MAX_NUM_DETTYPES],
       MULT_branch;
