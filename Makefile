@@ -2,7 +2,7 @@
 
 .PHONY = all run clean run_tests debug
 
-CC = g++
+CC = c++
 
 BIN_DIR = ./bin
 INC_DIR = ./inc
@@ -17,7 +17,7 @@ INC_FLAGS = -I $(INC_DIR)
 # LD_FLAGS = -fsanitize=address `root-config --glibs`
 
 # Normal compile
-CC_FLAGS = $(INC_FLAGS) -g `root-config --cflags`
+CC_FLAGS = $(INC_FLAGS) -g -O3 `root-config --cflags`
 LD_FLAGS = `root-config --glibs`
 
 
