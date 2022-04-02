@@ -24,7 +24,7 @@
 ### - start/stop the Pixie DAQ
 ### - save the run information in the $CURRENT_EXP/elog.txt file together with other comments inserted by the user
 ### - send the comments also to the InlufxDB database to be displayed in Grafana
-### - save automatically the current.set from ~/poll/ in $CURRENT_EXP/RAW/  
+### - save automatically the current.set from ~/poll/ in $CURRENT_EXP/SET/  
 
 
 import sys
@@ -104,7 +104,7 @@ while True:
 		window['status'].update("Running #%d" % run_number, background_color='sea green')
 		elog_new_entry(values, 'Started')
 		elog_read(window, values)
-		copyfile('/home/pixie16/poll/current.set', FOLDER+'/Run%d.set' % run_number)
+		copyfile('/home/pixie16/poll/current.set', FOLDER+'/SET/Run%d.set' % run_number)
 		grafana_new_entry(values, run_number, 'Started. ')
 		
 	if event == 'STOP':

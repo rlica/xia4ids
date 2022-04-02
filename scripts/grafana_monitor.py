@@ -52,7 +52,7 @@ def TOTAL(mod, chan):
 
 # Format the data string to be sent to InfluxDB
 def dataString(mod, chan):
-	return	TABLE_NAME +	' Module='	+ ('%d' % mod) + \
+	return	TABLE_NAME +	',Module='	+ ('%d' % mod) + \
 							',Channel='	+ ('%d' % chan) + \
 							' ICR='		+ ('%.1f' % ICR(mod, chan)) + \
 							',OCR='		+ ('%.1f' % OCR(mod, chan)) + \
@@ -132,7 +132,7 @@ while True:
 		r = requests.post(DATABASE, auth=(LOGIN, PASSWORD), data=fullString, verify=False, timeout=10)
 		print(r)
 		
-		time.sleep(3)
+		time.sleep(10)
 		
 		#Updating the file size
 		old_size = new_size
@@ -141,7 +141,7 @@ while True:
 	else:
 		requests.post(DATABASE, auth=(LOGIN, PASSWORD), data='pixie SCRIPT=2', verify=False, timeout=10)
 		new_size = os.stat(FILENAME).st_size
-		time.sleep(3)
+		time.sleep(10)
 		
 
 
