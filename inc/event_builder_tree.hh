@@ -45,9 +45,9 @@ void event_builder_tree() {
   for(i=0; i<=detnum; i++)  hrt[i]=0;
  
   
-  int detcount[dettypes+1], energy[dettypes+1][detnum+1];
-  
-  
+  int detcount[dettypes+1];
+  double energy[dettypes+1][detnum+1];
+
   
   while ( k < iData) {
     
