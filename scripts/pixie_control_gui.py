@@ -87,7 +87,7 @@ layout = [[sg.Text('Logfile entry:', font='Helvetica 18')],
            sg.Input(default_text = FOLDER, key='folder'), 
            sg.FolderBrowse(initial_folder = FOLDER)],
          ]
-window = sg.Window('IDS Simple DAQ Control', layout)
+window = sg.Window('IDS Simple DAQ Control', layout, location=(0,0))
 
 
 # Event Loop
