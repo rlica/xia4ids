@@ -103,6 +103,8 @@ while True:
 		#Get total number of modules from the number of columns written
 		MODULES = int((len(clean_line(0))-1 )/4)
 		
+		print(MODULES)
+		
 		#Get datarate
 		DATARATE = float(clean_line(16)[5])
 		if clean_line(16)[6] == 'E6B/s':  #usually it is kB/s
