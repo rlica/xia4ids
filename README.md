@@ -44,6 +44,7 @@ Parts of this code were modified from Pixie Acquisition and Analysis Software Su
  * Correlation mode (optional) - the program will skip the event builder and will only histogram the time
  differences between the selected modules and channels. 
 
+IMPORTANT: The number of modules and their configuration is hard-coded. Edit 'unpacker.cpp' from line 236.
 
 See the 'etc' folder for some examples of different configuration and calibration files.
 
