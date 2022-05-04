@@ -238,6 +238,15 @@ void Unpacker::InitializeMaskMap() {
     maskMap_.insert(make_pair(1, make_pair("42950", 250)));
     maskMap_.insert(make_pair(2, make_pair("42950", 250)));
     maskMap_.insert(make_pair(3, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(4, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(5, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(6, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(7, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(8, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(9, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(10, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(11, make_pair("42950", 250)));
+    maskMap_.insert(make_pair(12, make_pair("42950", 250)));
 }
 
 pair<double, double> Unpacker::CalculateTimeInSamples(const XiaListModeDataMask& mask,

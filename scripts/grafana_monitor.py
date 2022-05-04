@@ -7,7 +7,7 @@
 #running in the tmux session 'poll2'
 #
 #R. Lica, May 2021
-#Last change 30.05.2021
+#Last change 04.05.2022 - updated PAASS monitor.cpp 
 
 DATABASE='https://dbod-ids-db.cern.ch:8080/write?db=ids'
 LOGIN='admin'
@@ -36,7 +36,7 @@ def handler(signum, frame):
 
 #Reading only the last entries in the file
 def clean_line(chan):
-	return lines[chan-18].replace("k", "E3").replace("M", "E6").replace("|", " ").split()
+	return lines[chan-16].replace("k", "E3").replace("M", "E6").replace("|", " ").split()
 
 def ICR(mod, chan):
 	return float(clean_line(chan)[1+mod*4])
@@ -106,16 +106,17 @@ while True:
 		print(MODULES)
 		
 		#Get datarate
-		DATARATE = float(clean_line(16)[5])
-		if clean_line(16)[6] == 'E6B/s':  #usually it is kB/s
+		#print(clean_line(-4)[5])
+		DATARATE = float(clean_line(-4)[5])
+		if clean_line(-4)[6] == 'E6B/s':  #usually it is kB/s
 			DATARATE = DATARATE*1000
 		
-		if clean_line(16)[6] == 'B/s':  #usually it is kB/s
+		if clean_line(-4)[6] == 'B/s':  #usually it is kB/s
 			DATARATE = DATARATE/1000
 		
 		#Get total RUNTIME in seconds
 		#datetime.strptime(clean_line(16)[2],'%H:%M:%S.%f') does not understand >24h, therefore we need to split the hours from the rest
-		hours, rest = clean_line(16)[2].split(':', 1)
+		hours, rest = clean_line(-4)[2].split(':', 1)
 		pt = datetime.strptime(rest,'%M:%S.%f')
 		RUNTIME = pt.second + pt.minute*60 + int(hours)*3600
 		
