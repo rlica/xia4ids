@@ -267,7 +267,7 @@ void read_config(int argc, char **argv) {
     
   }
   
-  if (dettypes == 0 || modules == 0 || dettypes > 30 || modules > 10) {
+  if (dettypes == 0 || modules == 0 || dettypes > MAX_NUM_MOD || modules > MAX_NUM_MOD) {
     printf("ERROR: In configuration file '%s'. Dettypes=%d, Modules=%d\n", argv[1], dettypes, modules);
     exit(0);
   }
