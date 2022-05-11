@@ -126,7 +126,7 @@ while True:
 		# Adding all the channels with data into a single string to post 
 		for mod in range(MODULES):
 			for chan in range(16):
-				if TOTAL(mod, chan) > 0:
+				if TOTAL(mod, chan) > -1:
 					fullString += dataString(mod, chan)
 		
 		print(fullString) 

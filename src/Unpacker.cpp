@@ -143,7 +143,7 @@ int Unpacker::DecodeBuffer(std::vector<XiaData*>& result, unsigned int* buf, con
         // One last check to ensure event length matches what we think it
         // should be.
         if (traceLength / 2 + headerLength != eventLength) {
-            cerr << "XiaListModeDataDecoder::ReadBuffer : Event"
+            cerr << "Module " << modNum << " - XiaListModeDataDecoder::ReadBuffer : Event"
                 "length (" << eventLength << ") does not correspond to "
                 "header length (" << headerLength
                 << ") and trace length ("

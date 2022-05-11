@@ -6,6 +6,8 @@
 #C. Page 2022
 #Last change 09/05/2022
 
+#R. Lica - module numbering starts from 0 !!!
+
 #Prerequisites:
 #pip3 install pysimplegui
 #yum install python3-tkinter
@@ -203,7 +205,7 @@ def output_module_param(modules,param,noModules):
     if param in modules[0].parameters.keys():
         ret_str = f"{param}\n\n"
         for mod in range(noModules):
-            ret_str+=f"\t\tModule {mod+1}"
+            ret_str+=f"\t\tModule {mod}"  # RL: Module numbering always from 0!
         ret_str+="\n"        
         for mod in range(noModules):
             ret_str+=f"\t\t{modules[mod].parameters[param]}"
