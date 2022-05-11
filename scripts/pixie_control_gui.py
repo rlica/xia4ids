@@ -94,7 +94,7 @@ layout = [[sg.Text('Logfile entry:', font='Helvetica 18')],
            sg.Input(default_text = FOLDER, key='folder'), 
            sg.FolderBrowse(initial_folder = FOLDER)],
          ]
-window = sg.Window('IDS Simple DAQ Control', layout)
+window = sg.Window('IDS Simple DAQ Control', layout, location=(0,0)) #location=(0,0) /JC
 
 
 # Event Loop
@@ -111,7 +111,7 @@ while True:
 		window['status'].update("Running #%d" % run_number, background_color='sea green')
 		elog_new_entry(values, 'Started')
 		elog_read(window, values)
-		copyfile('/home/pixie16/poll/current.set', FOLDER+'/Run%d.set' % run_number)
+		copyfile('/home/pixie16/poll/current.set', FOLDER+'/SET/Run%d.set' % run_number)
 		grafana_new_entry(values, run_number, 'Started. ')
 	
 	if event =='Comment':
