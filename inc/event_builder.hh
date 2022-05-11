@@ -224,7 +224,7 @@ void event_builder() {
             }
       }
             
-      if (evSize > 200) {
+      if (evSize > MAX_NUM_DET) {
 	printf("ERROR: event_builder.h - evSize = %d (>200 !).\n", evSize);
 	exit(0);
       }
