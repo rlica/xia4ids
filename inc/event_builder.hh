@@ -225,8 +225,10 @@ void event_builder() {
       }
             
       if (evSize > MAX_NUM_DET) {
-	printf("ERROR: event_builder.h - evSize = %d (>200 !).\n", evSize);
-	exit(0);
+		printf("Warning: event_builder.h - evSize = %d (>200 !).\n", evSize);
+	    iEvt++;
+		k+=m;
+		continue;
       }
       
       
