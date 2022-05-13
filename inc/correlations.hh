@@ -48,8 +48,7 @@ void correlations() {
 	int ymax=0, xmax=0, dx=0;
 	for (z=0; z<RANGE; z++)  if (corr_hist[j][z] > ymax) { ymax = corr_hist[j][z]; xmax=z; dx=CORR_DELAY-xmax; }
 	
-	//fprintf(syncstat, "R%d_C%dM%d-C%dM%d: Ymax = %d at Xmax = %d\n", runnum, firstCh, firstMod, secondCh, secondMod, ymax, xmax);
-	printf("R%d_M%dC%d-M%dC%d.txt|a:64\t\t Ymax = %d\t Xmax = %d\t dX = %d \n", runnumber, firstMod[j], firstCh[j], secondMod[j], secondCh[j],  ymax, xmax, dx);
+	printf("R%d_M%02dC%02d-M%02dC%02d.txt|a:64\t\t Ymax = %d\t Xmax = %d\t dX = %d \n", runnumber, firstMod[j], firstCh[j], secondMod[j], secondCh[j],  ymax, xmax, dx);
 	
 	}
 	printf("-------------------\n");
