@@ -21,7 +21,7 @@ void write_correlations() {
 	      corr_hist[j][z]=0; //it's nice to zero the data for the next run
 	    }
 	    
-	    fprintf(syncstat, "R%d_M%dC%d-M%dC%d\t Ymax = %d\t Xmax = %d\t dX = %d \n", runnumber, firstMod[j], firstCh[j], secondMod[j], secondCh[j], ymax, xmax, dx);
+	    fprintf(syncstat, "R%d_M%02dC%02d-M%02dC%02d%d\t\t Ymax = %d\t Xmax = %d\t dX = %d \n", runnumber, firstMod[j], firstCh[j], secondMod[j], secondCh[j], ymax, xmax, dx);
 	    
 
 	  }
