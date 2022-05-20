@@ -110,7 +110,7 @@ int main(int argc, char **argv)
             }
 
             //ROOT format
-            else if (root == 1) {
+            else if (root == 1 || stat == 1) {
                 sprintf(outname, "Run%03d.root", runnumber);
                 rootfile = TFile::Open(outname, "recreate");
                 if (!rootfile) {
@@ -275,7 +275,7 @@ int main(int argc, char **argv)
         if (corr == 0) {
             write_stats();
             memset(stats, 0, sizeof(stats));
-			if (root == 1) {
+			if (root == 1 || stat == 1) {
 				rootfile->Write();
 				rootfile->Save();
 				rootfile->Close();

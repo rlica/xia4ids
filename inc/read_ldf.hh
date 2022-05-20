@@ -295,7 +295,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
         // printf("mod = %d \t chan = %d \t time = %lf \t %lf \n", decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetTime(), decodedEvent->GetCfdFractionalTime());
         
         //Filling ROOT Histogram
-		if (root == 1 && corr == 0) {
+		if ( (root == 1 || stat == 1) && corr == 0 ) {
 			int line = lmc[DataArray[iData].modnum][DataArray[iData].chnum];
 			hStats->AddBinContent(line, 1);
 			h[line]->Fill(DataArray[iData].energy);
