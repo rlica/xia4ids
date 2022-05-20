@@ -1,6 +1,6 @@
 
 #define MAX_NUM_DET      300
-#define MAX_NUM_DETTYPES  10
+#define MAX_NUM_DETTYPES  60
 #define MAX_NUM_CHN       17
 #define MAX_NUM_MOD       15
 #define MAX_CAL            5

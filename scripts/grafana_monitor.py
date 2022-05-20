@@ -53,7 +53,7 @@ def TOTAL(mod, chan):
 # Format the data string to be sent to InfluxDB
 def dataString(mod, chan):
 	return	TABLE_NAME +	',Module='	+ ('%d' % mod) + \
-							',Channel='	+ ('%d' % chan) + \
+							',Channel='	+ ('%02d' % chan) + \
 							' ICR='		+ ('%.1f' % ICR(mod, chan)) + \
 							',OCR='		+ ('%.1f' % OCR(mod, chan)) + \
 							',DATA='	+ ('%.1f' % DATA(mod, chan)) + \
