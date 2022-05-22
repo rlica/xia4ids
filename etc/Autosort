@@ -1,0 +1,66 @@
+#!/bin/bash
+
+#Author: R. Lica, razvan.lica@cern.ch
+
+if [ -z $1 ] 
+  then
+    echo "ERROR: Run number required as argument (eg: 00X)."
+    exit 1
+fi
+
+while [ -f TE-TpClov.cmat ] 
+  do
+    echo "WARNING: Another person is using the Autosort script. Retrying..."
+    sleep 5
+done
+
+printf -v RUN_NUMBER "%03d" $1
+echo $RUN_NUMBER
+
+rm -f *.0$RUN_NUMBER
+
+xia4ids conf/config_gasp <<echo
+$RUN_NUMBER
+$RUN_NUMBER
+echo
+
+
+gsort << echo
+conf/online.setup
+256
+256
+256
+256
+256
+256
+256
+D
+Run$RUN_NUMBER
+16
+Y
+echo
+
+
+cat log_Run$1.txt
+
+
+#2D matrices - 7
+
+mv  TE-TpClov.cmat TE-TpClov-R$RUN_NUMBER.cmat
+mv  TE-TsClov.cmat TE-TsClov-R$RUN_NUMBER.cmat
+mv  iE-Clov.cmat iE-Clov-R$RUN_NUMBER.cmat
+
+
+mv  ESymm-Clov.cmat ESymm-Clov-R$RUN_NUMBER.cmat
+
+mv  TE-TpBeta.cmat TE-TpBeta-R$RUN_NUMBER.cmat
+mv  TE-TpClov-beta.cmat TE-TpClov-beta-R$RUN_NUMBER.cmat
+mv  ESymm-Clov-beta.cmat ESymm-Clov-beta-R$RUN_NUMBER.cmat
+
+mv *.0??? projections/
+mv log*.txt logs/
+
+rm -f Run$RUN_NUMBER
+
+ls -lrth *$RUN_NUMBER.cmat
+

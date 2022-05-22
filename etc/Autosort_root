@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#Author: R. Lica, razvan.lica@cern.ch
+#Modifications: Z. Favier, zoe.favier@cern.ch
+
+if [ -z $1 ] 
+  then
+    echo "ERROR: Run number required as argument (eg: 00X)."
+    exit 1
+fi
+
+
+
+while [ -f sorting_Run$1.txt ] 
+ do
+  echo "WARNING: Another person is using the Autosort_root script. Retrying..."
+  sleep 5
+ done
+
+
+printf -v RUN_NUMBER "%03d" $1
+echo $RUN_NUMBER
+
+echo "Starting sorting Run$1">> sorting_Run$1.txt
+
+xia4ids conf/config_root_online <<echo
+$RUN_NUMBER
+$RUN_NUMBER
+echo
+
+mv log*.txt logs/
+rm sorting_Run$1.txt #Hi Zoe, noticed the script was working well but missing this part. All good now :) 
+
+ls -lrth *$RUN_NUMBER.root
+
