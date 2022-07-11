@@ -88,7 +88,9 @@ int main(int argc, char **argv)
             //GASPware format
             if (gasp == 1)
             {
-                sprintf(outname, "Run%03d", runnumber);
+                //sprintf(outname, "Run%03d", runnumber);
+                if(runnumber<1000) sprintf(outname, "Run%03d", runnumber);
+                else sprintf(outname, "Run%d", runnumber);
                 fp_out = fopen(outname, "wt");
                 if (!fp_out)
                 {
@@ -100,7 +102,9 @@ int main(int argc, char **argv)
             //Event List format
             else if (list == 1)
             {
-                sprintf(outname, "Run%03d.list", runnumber);
+                //sprintf(outname, "Run%03d.list", runnumber);
+                if(runnumber<1000) sprintf(outname, "Run%03d.list", runnumber);
+                else sprintf(outname, "Run%d.list", runnumber);
                 fp_out = fopen(outname, "wt");
                 if (!fp_out)
                 {
@@ -111,7 +115,9 @@ int main(int argc, char **argv)
 
             //ROOT format
             else if (root == 1 || stat == 1) {
-                sprintf(outname, "Run%03d.root", runnumber);
+                //sprintf(outname, "Run%03d.root", runnumber);
+                if(runnumber<1000) sprintf(outname, "Run%03d.root", runnumber);
+                else sprintf(outname, "Run%d.root", runnumber);
                 rootfile = TFile::Open(outname, "recreate");
                 if (!rootfile) {
                     fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname);
@@ -146,9 +152,11 @@ int main(int argc, char **argv)
 			// Normal mode analysing the full file
 			if (rate == 0) {
 				if (runpart == 0)
-					sprintf(filename, "%s%03d.ldf", runname, runnumber);
+					if(runnumber<1000) sprintf(filename, "%s%03d.ldf", runname, runnumber);
+					else sprintf(filename, "%s%03d.ldf", runname, runnumber);
 				else
-					sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
+					if(runnumber<1000) sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
+					else sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
 				fp_in = fopen(filename, "rb");
 				if (!fp_in) {
 					printf("File parsing completed: %s does not exist\n", filename);

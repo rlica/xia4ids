@@ -297,8 +297,10 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
         //Filling ROOT Histogram
 		if ( (root == 1 || stat == 1) && corr == 0 ) {
 			int line = lmc[DataArray[iData].modnum][DataArray[iData].chnum];
+			int det = tmc[DataArray[iData].modnum][DataArray[iData].chnum];
 			hStats->AddBinContent(line, 1);
 			h[line]->Fill(DataArray[iData].energy);
+			htot[det]->Fill(DataArray[iData].energy);
 		}
 		
 		//In correlation mode, we need to delay the stop (stop = secondCh,secondMod)

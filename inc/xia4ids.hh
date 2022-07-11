@@ -127,7 +127,7 @@ typedef struct GaspRecHeader {
 // ROOT Variables and objects
 TFile *rootfile;
 TTree *tree;
-TH1F *hStats, *h[MAX_NUM_DET];
+TH1F *hStats, *h[MAX_NUM_DET], *htot[6];
 
 double E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET];
 int   //E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],

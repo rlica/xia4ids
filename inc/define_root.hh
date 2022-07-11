@@ -43,6 +43,9 @@ void define_root() {
                      65535, 1, 65536);
      
      
-  
+  for (j = 1; j < 7; j++)
+     htot[j] = new TH1F(Form("tot%d_%s", j, root_string[j]),
+                     Form("%s_total", root_string[j]),
+                     65535, 1, 65536);
   
 }

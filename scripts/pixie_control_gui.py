@@ -52,6 +52,7 @@ LOGFILE = "/elog.txt" #default name for the logfile
 FOLDER = os.getenv('CURRENT_EXP')
 
 def get_run_number():
+	#NEXT LINE CHANGED FOR RAW2!!!!
 	list_of_files = glob.glob(FOLDER+'/RAW/*.ldf') #Note: always update the $CURRENT_EXP env variable in .bashrc
 	latest_file = max(list_of_files, key=os.path.getctime)
 	return int(re.search('run_(\d+)', latest_file).group(1))
@@ -105,6 +106,8 @@ while True:
 		break
 
 	if event == 'RUN':
+		
+
 		subprocess.run(['/bin/bash', '-i', '-c', 'pixie_start'])
 		time.sleep(1)
 		run_number = get_run_number()
@@ -113,6 +116,21 @@ while True:
 		elog_read(window, values)
 		copyfile('/home/pixie16/poll/current.set', FOLDER+'/SET/Run%d.set' % run_number)
 		grafana_new_entry(values, run_number, 'Started. ')
+		
+		#################COMMENT FROM HERE IF BROKEN!!!!###############
+		
+
+		exp_no = os.getenv('CURRENT_EXP').split("/")[-1]
+		current_time = str(datetime.now()).split(".")[0].replace(" ","_").replace(":","-")
+
+		if not os.path.isdir(f"/home/pixie16/poll/parameters/{exp_no}"):
+			print("\n\n\n\nparameter folder for current experiment not found. creating one now...\n\n\n\n")
+			os.mkdir(f"/home/pixie16/poll/parameters/{exp_no}")
+				
+		dump_name = f"parameters/{exp_no}/{exp_no}_{current_time}_run_{run_number}"
+		subprocess.run(['/bin/bash', '-i', '-c', f'tmux send-keys -t poll2:1.0 \"dump {dump_name}.txt\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0'],check = True)
+		####################COMMENT UNTIL HERE IF BROKEN##################
+
 	
 	if event =='Comment':
 		elog_comment(values)
