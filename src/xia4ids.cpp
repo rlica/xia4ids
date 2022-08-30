@@ -284,6 +284,17 @@ int main(int argc, char **argv)
             write_stats();
             memset(stats, 0, sizeof(stats));
 			if (root == 1 || stat == 1) {
+        
+        //AIS: the tot can be done here using the class "Add"
+//          int tmp_type = 0;
+//          for (int i = 0; i < detnum; i++){
+//            tmp_type = list_typedet[i];
+//            if (tmp_type >0) {
+//              htot[tmp_type]->Add(h[i],1);
+//            }
+//          }
+        
+        
 				rootfile->Write();
 				rootfile->Save();
 				rootfile->Close();

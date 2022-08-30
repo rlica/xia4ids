@@ -262,8 +262,10 @@ void read_config(int argc, char **argv) {
 			start[config_coding[i][0]][config_coding[i][1]]=config_coding[i][6];
 			 stop[config_coding[i][0]][config_coding[i][1]]=config_coding[i][7];
    
-
-	
+    //AIS: Only if the Add class is used
+    if ( (root == 1 || stat == 1)) {
+      list_typedet[i] = config_coding[i][1];
+    }
     
   }
   

@@ -1,6 +1,6 @@
 
-#define MAX_NUM_DET      300
-#define MAX_NUM_DETTYPES  60
+#define MAX_NUM_DET      200  //AIS: Orig value was 300
+#define MAX_NUM_DETTYPES  20  //AIS: Orig value was 60
 #define MAX_NUM_CHN       17
 #define MAX_NUM_MOD       15
 #define MAX_CAL            5
@@ -99,7 +99,8 @@ typedef struct GaspRecHeader {
      start[MAX_NUM_DET][MAX_NUM_DETTYPES],   // start for the pair_tac
      stop[MAX_NUM_DET][MAX_NUM_DETTYPES],    // stop for the pair_tac   
        lmc[MAX_NUM_MOD][MAX_NUM_CHN];        // line [mod][chan] -> returns the index of the config line
-  
+
+  int list_typedet[MAX_NUM_DET];//AIS: Only if the Add class is used
   int corr, list, gasp, root, stat, rate, rate_root;
   int list_evSize, reference_link;
   int corr_hist[MAX_NUM_DET][RANGE];
@@ -127,13 +128,16 @@ typedef struct GaspRecHeader {
 // ROOT Variables and objects
 TFile *rootfile;
 TTree *tree;
-TH1F *hStats, *h[MAX_NUM_DET], *htot[6];
+TH1F *hStats, *h[MAX_NUM_DET], *htot[MAX_NUM_DETTYPES]; //AIS: Original def was TH1F *hStats, *h[MAX_NUM_DET], *htot[7];
 
-double E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET];
+//double E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET]; //AIS original, also you can use Double_t
 int   //E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
       T_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
       M_branch[MAX_NUM_DETTYPES],
       MULT_branch;
+
+Float_t  E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET];
+
 ULong64_t  TIME_REF_branch;
 ULong64_t  TIME_RUN_branch;    
 char root_string[MAX_NUM_DET][100];

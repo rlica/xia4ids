@@ -46,7 +46,8 @@ void event_builder_tree() {
  
   
   int detcount[dettypes+1];
-  double energy[dettypes+1][detnum+1];
+  Float_t energy[dettypes+1][detnum+1];
+//  double energy[dettypes+1][detnum+1]; //AIS original, also you can use Double_t
 
   
   while ( k < iData) {
