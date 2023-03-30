@@ -83,17 +83,18 @@ def grafana_new_entry(values, run_number, status):
 #Building the GUI window
 sg.theme('Light Blue 2')
 layout = [[sg.Text('Logfile entry:', font='Helvetica 18')],
-          [sg.Multiline(size=(100,8), key='input', do_not_clear=False)],
+          [sg.Multiline(size=(115,14), key='input', do_not_clear=False)],
           [sg.Button('RUN',  button_color='sea green', font='Helvetica 18', size=(7,2)), 
            sg.Button('STOP',  button_color='indian red', font='Helvetica 18', size=(7,2)),
            sg.Text(size=(14, 1), font=('Helvetica', 20), background_color='white', justification='center', key='status'),
 		   sg.Button('Comment',  button_color='gold', font='Helvetica 18', size=(7,2)), 
            sg.Button('STAT', font='Helvetica 18', size=(4,2)), 
            sg.Exit(font='Helvetica 18', size=(4,2))],
-          [sg.Multiline(size=(100,30), autoscroll=True, key='output')],
+          [sg.Multiline(size=(115,24), autoscroll=True, key='output')],
           [sg.Text('Exp. folder', size=(10, 1),font='Helvetica 14'), 
            sg.Input(default_text = FOLDER, key='folder'), 
-           sg.FolderBrowse(initial_folder = FOLDER)],
+           sg.FolderBrowse(initial_folder = FOLDER),
+		   sg.Button('Template',   font='Helvetica 12', size=(5,1))],
          ]
 window = sg.Window('IDS Simple DAQ Control', layout, location=(0,0)) #location=(0,0) /JC
 
@@ -116,9 +117,6 @@ while True:
 		elog_read(window, values)
 		copyfile('/home/pixie16/poll/current.set', FOLDER+'/SET/Run%d.set' % run_number)
 		grafana_new_entry(values, run_number, 'Started. ')
-		
-		#################COMMENT FROM HERE IF BROKEN!!!!###############
-		
 
 		exp_no = os.getenv('CURRENT_EXP').split("/")[-1]
 		current_time = str(datetime.now()).split(".")[0].replace(" ","_").replace(":","-")
@@ -129,7 +127,6 @@ while True:
 				
 		dump_name = f"parameters/{exp_no}/{exp_no}_{current_time}_run_{run_number}"
 		subprocess.run(['/bin/bash', '-i', '-c', f'tmux send-keys -t poll2:1.0 \"dump {dump_name}.txt\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0'],check = True)
-		####################COMMENT UNTIL HERE IF BROKEN##################
 
 	
 	if event =='Comment':
@@ -144,7 +141,20 @@ while True:
 		elog_new_entry(values, 'Stopped')
 		elog_read(window, values)
 		grafana_new_entry(values, run_number, 'Stopped. ')
-		
+	
+	if event == "Template":
+		template_str = "Isotope: "
+		template_str+= "\nProton current: "
+		template_str+= "\nProtons pulses per supercycle: "
+		template_str+= "\nTape Movement: "
+		template_str+= "\nBeamgate open: "
+		template_str+= "\nBeamgate delay: "
+		template_str+= "\nTarget heating: "
+		template_str+= "\nLine heating: "
+		template_str+= "\nOther comments:"
+		template_str+= "\n"
+		window['input'].update(template_str)
+
 	if event == 'STAT':
 		status_message_list = subprocess.check_output(['/bin/bash', '-i', '-c', 'pixie_status']).decode("utf-8").split()
 		acq_running = status_message_list[status_message_list.index('running')+2]
