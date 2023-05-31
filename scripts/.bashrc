@@ -69,6 +69,6 @@ new_exp_folder() {
 
 ### Define current experiment path
 ##  Environment variable used by 'grafana_monitor'
-export CURRENT_EXP=/Data_Dir/2021/IS622/tests
+export CURRENT_EXP=/Data_Dir2/2022/IS684/
 
 

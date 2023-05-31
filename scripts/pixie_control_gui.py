@@ -125,7 +125,7 @@ while True:
 			print("\n\n\n\nparameter folder for current experiment not found. creating one now...\n\n\n\n")
 			os.mkdir(f"/home/pixie16/poll/parameters/{exp_no}")
 				
-		dump_name = f"parameters/{exp_no}/{exp_no}_{current_time}_run_{run_number}"
+		dump_name = f"{FOLDER}/SET/{exp_no}_{current_time}_run_{run_number}"
 		subprocess.run(['/bin/bash', '-i', '-c', f'tmux send-keys -t poll2:1.0 \"dump {dump_name}.txt\" Enter && sleep 1 && tmux capture-pane -pt poll2:1.0'],check = True)
 
 	
