@@ -21,6 +21,7 @@ https://github.com/rlica/xia4ids
 #include "TFile.h"
 #include "TTree.h"
 #include "TBrowser.h"
+#include "TH1.h"
 #include "TH2.h"
 #include "TRandom.h"
 #include "TCanvas.h"
@@ -45,11 +46,10 @@ https://github.com/rlica/xia4ids
 #include "read_ldf.hh"
 
 
-int main(int argc, char **argv)
-{
+int main(int argc, char *argv[]) {
 
     srand(time(0));
-
+    
     printf("\n\t\t----------------------------------");
     printf("\n\t\t    XIA DGF Pixie-16 Converter");
     printf("\n\t\t https://github.com/rlica/xia4ids");
@@ -65,16 +65,15 @@ int main(int argc, char **argv)
     DataArray = (struct dataStruct *)calloc(memoryuse, sizeof(struct dataStruct));
     TempArray = (struct dataStruct *)calloc(memoryuse, sizeof(struct dataStruct));
 
-    if (gasp == 1 || list == 1) {
-		EventArray = (struct Event *)calloc(memoryuse, sizeof(struct Event));
-		GHeader = (struct GaspRecHeader *)calloc(1, sizeof(struct GaspRecHeader));
+    if (gasp_format == 1 || list_format == 1) {
+        EventArray = (struct Event *)calloc(memoryuse, sizeof(struct Event));
+        GHeader    = (struct GaspRecHeader *)calloc(1, sizeof(struct GaspRecHeader));
     }
 
     // Reading run by run
-    for (runnumber = runstart; runnumber <= runstop; runnumber++)
-    {
+    for (runnumber = runstart; runnumber <= runstop; runnumber++) {
 		
-		raw_list_size = 0, good_list_size = 0;
+        raw_list_size = 0, good_list_size = 0;
         totEvt = 0;
         tref = 0;
         run_good_chunks = 0;
@@ -83,45 +82,45 @@ int main(int argc, char **argv)
         bool first_cycle = true; // to keep track of total run time
 
         // Open output file
-        if (corr == 0) {
+        if (corr_format == 0) {
 
             //GASPware format
-            if (gasp == 1)
-            {
+            if (gasp_format == 1) {
+                
                 //sprintf(outname, "Run%03d", runnumber);
                 if(runnumber<1000) sprintf(outname, "Run%03d", runnumber);
                 else sprintf(outname, "Run%d", runnumber);
                 fp_out = fopen(outname, "wt");
-                if (!fp_out)
-                {
+                if (!fp_out) {
                     fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname);
-                    exit(0);
+                    return 0;
                 }
             }
 
             //Event List format
-            else if (list == 1)
-            {
-                //sprintf(outname, "Run%03d.list", runnumber);
+            else if (list_format == 1) {
+                
+                sprintf(outname, "Run%03d.list", runnumber);
                 if(runnumber<1000) sprintf(outname, "Run%03d.list", runnumber);
                 else sprintf(outname, "Run%d.list", runnumber);
                 fp_out = fopen(outname, "wt");
-                if (!fp_out)
-                {
+                if (!fp_out) {
                     fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname);
-                    exit(0);
+                    return 0;
                 }
             }
 
             //ROOT format
-            else if (root == 1 || stat == 1) {
+            else if (root_format == 1 || stat_format == 1) {
+                
                 //sprintf(outname, "Run%03d.root", runnumber);
                 if(runnumber<1000) sprintf(outname, "Run%03d.root", runnumber);
                 else sprintf(outname, "Run%d.root", runnumber);
-                rootfile = TFile::Open(outname, "recreate");
+//                rootfile = TFile::Open(outname, "recreate");
+                rootfile = new TFile(outname, "recreate", "IDS data file");
                 if (!rootfile) {
                     fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname);
-                    exit(0);
+                    return 0;
                 }
                 define_root();
             }
@@ -135,7 +134,8 @@ int main(int argc, char **argv)
 			start_clock = (double)clock();
                
 			//Ratemeter mode, analysing only the last RATE_EOF_MB megabytes from a file
-			if (rate == 1) {
+			if (rate_format == 1) {
+                
 				if (argc < 3) { //Rate mode takes the input file as the second argument
 					printf("Config file and input file required as arguments: ...$xia4ids config_file_name input file [calibration] \n");
 					exit(0);
@@ -150,13 +150,14 @@ int main(int argc, char **argv)
 			}				
                
 			// Normal mode analysing the full file
-			if (rate == 0) {
+			if (rate_format == 0) {
+                
 				if (runpart == 0)
-					if(runnumber<1000) sprintf(filename, "%s%03d.ldf", runname, runnumber);
-					else sprintf(filename, "%s%03d.ldf", runname, runnumber);
-				else
-					if(runnumber<1000) sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
-					else sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
+                    if(runnumber<1000) sprintf(filename, "%s%03d.ldf", runname, runnumber);
+                    else sprintf(filename, "%s%03d.ldf", runname, runnumber);
+                else
+                    if(runnumber<1000) sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
+                    else sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
 				fp_in = fopen(filename, "rb");
 				if (!fp_in) {
 					printf("File parsing completed: %s does not exist\n", filename);
@@ -185,24 +186,24 @@ int main(int argc, char **argv)
 
 				// iData will be the last data index.
 				iData=0, iEvt=0;
-                   
+                
 				// Initializing the data array to zero
 				memset(DataArray,0,memoryuse);  
 				memset(TempArray,0,memoryuse); //Used only when sorting
-				
+                
 				// Displaying the progress bar
 				progress = float(ldf_pos_index) / float(ldf.GetFileLength());
 				printProgress(progress);
-									
+                
 				// read_ldf() will read a fixed number of spills at once from the binary file
 				// if ratemode is enabled, read_ldf() will process only the last part of the file
 				raw_list_size  += read_ldf(ldf, data, ldf_pos_index);
 				good_list_size += iData;
 				if (raw_list_size == 0)	continue;               					
-																	
+                
 				// Sorting the data chronologically.
 				MergeSort(DataArray, TempArray, 0, iData);
-									
+                
 				// Extract first and last time stamps 
 				if (first_cycle) { 
 					if (DataArray[1].time > 0)
@@ -210,19 +211,19 @@ int main(int argc, char **argv)
 					else
 						printf("ERROR: Cannot read first timestamp \n");
 					first_cycle = false;
-				}                    
+				}
 				if (DataArray[iData-1].time > 0)
 					last_ts = DataArray[iData-1].time;
 								
 				// Writing statistics and skipping the event builder, will sort everything twice as fast
-				if (stat == 1) continue;
+				if (stat_format == 1) continue;
 				                       
 				// Looking for correlations
-				if (corr > 0) 
+				if (corr_format > 0)
 					correlations();
 
 				// Writing to GASPWare
-				else if (gasp == 1) {
+				else if (gasp_format == 1) {
 					event_builder();
 					write_gasp();
 					totEvt += iEvt;
@@ -231,7 +232,7 @@ int main(int argc, char **argv)
 				}
 
 				// Writing event lists
-				else if (list == 1) {
+				else if (list_format == 1) {
 					event_builder_list();
 					write_list();
 					totEvt += iEvt;
@@ -240,7 +241,7 @@ int main(int argc, char **argv)
 				}
 
 				// Writing to a ROOT Tree
-				else if (root == 1) {
+				else if (root_format == 1 || stat_format == 1) {
 					event_builder_tree();
 					totEvt += iEvt;
 					printf(" %3d events written to %s ", totEvt, outname);
@@ -280,29 +281,18 @@ int main(int argc, char **argv)
 
         // Printing statistics for each run if not in correlation mode
         // Writing the root file to disk
-        if (corr == 0) {
+        if (corr_format == 0) {
             write_stats();
             memset(stats, 0, sizeof(stats));
-			if (root == 1 || stat == 1) {
-        
-        //AIS: the tot can be done here using the class "Add"
-//          int tmp_type = 0;
-//          for (int i = 0; i < detnum; i++){
-//            tmp_type = list_typedet[i];
-//            if (tmp_type >0) {
-//              htot[tmp_type]->Add(h[i],1);
-//            }
-//          }
-        
-        
-				rootfile->Write();
-				rootfile->Save();
-				rootfile->Close();
-			}
-        }  
+            if (root_format == 1 || stat_format == 1) {
+                rootfile->Write();
+                rootfile->Save();
+                rootfile->Close();
+            }
+        }
 
 		// Writing correlation statistics for each run to file
-		if (corr > 0)
+		if (corr_format > 0)
 			write_correlations();
         
         std::cout << "Sorting completed!" << std::endl;
@@ -311,6 +301,6 @@ int main(int argc, char **argv)
 
     free(DataArray);
     free(TempArray);
-    exit(0);
-
+    
+    return 0;
 } //end of main

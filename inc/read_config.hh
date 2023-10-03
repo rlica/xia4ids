@@ -8,7 +8,7 @@ void read_config(int argc, char **argv) {
   
     
   if (argc < 2) {
-      printf("Config file required as argument: ...$n4i [config_file_name] \n");
+      printf("Config file required as argument: ...$xia4ids [config_file_name] \n");
     exit(0);
   }
 
@@ -78,11 +78,11 @@ void read_config(int argc, char **argv) {
     printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stat, root, rate}\n",  argv[1]);
     exit(0);
   }  
-  if      ( strncmp(format_string, "stat", 4) == 0 )  { stat = 1; printf("Running in STAT mode\n"); }
-  else if ( strncmp(format_string, "rate", 4) == 0 )  { rate = 1; root = 1;  printf("Running in RATE mode\n"); }
-  else if ( strncmp(format_string, "list", 4) == 0 )  { list = 1; printf("Running in LIST mode\n"); }
-  else if ( strncmp(format_string, "gasp", 4) == 0 )  { gasp = 1; printf("Running in GASP mode\n"); }
-  else if ( strncmp(format_string, "root", 4) == 0 )  { root = 1; printf("Running in ROOT mode\n"); }
+  if      ( strncmp(format_string, "stat", 4) == 0 )  { stat_format = 1; printf("Running in STAT mode\n"); }
+  else if ( strncmp(format_string, "rate", 4) == 0 )  { rate_format = 1; root_format = 1;  printf("Running in RATE mode\n"); }
+  else if ( strncmp(format_string, "list", 4) == 0 )  { list_format = 1; printf("Running in LIST mode\n"); }
+  else if ( strncmp(format_string, "gasp", 4) == 0 )  { gasp_format = 1; printf("Running in GASP mode\n"); }
+  else if ( strncmp(format_string, "root", 4) == 0 )  { root_format = 1; printf("Running in ROOT mode\n"); }
   else {
     printf("ERROR: Cannot read <Format> from '%s'. Format {gasp, list, stat, root, rate}\n",  argv[1]);
     exit(0);
@@ -122,15 +122,15 @@ void read_config(int argc, char **argv) {
   
   
   //correlation mode will skip the event builder
-  if( fscanf(input_file,"Correlations\n%d %d %d %d\n", &firstMod[corr],
-                                            &firstCh[corr],
-	 	                          &secondMod[corr],
-		                           &secondCh[corr] ) == 4 ) {
-    corr++;
-    while ( fscanf(input_file,"%d %d %d %d\n", &firstMod[corr],
-                                       &firstCh[corr],
-		                     &secondMod[corr],
-		                      &secondCh[corr] ) == 4 ) corr++;
+  if( fscanf(input_file,"Correlations\n%d %d %d %d\n", &firstMod[corr_format],
+                                            &firstCh[corr_format],
+	 	                          &secondMod[corr_format],
+		                           &secondCh[corr_format] ) == 4 ) {
+    corr_format++;
+    while ( fscanf(input_file,"%d %d %d %d\n", &firstMod[corr_format],
+                                       &firstCh[corr_format],
+		                     &secondMod[corr_format],
+		                      &secondCh[corr_format] ) == 4 ) corr_format++;
     
   }
   
@@ -146,8 +146,8 @@ void read_config(int argc, char **argv) {
   
   
   //ratemode needs 2 arguments
-  if (rate == 1 && argc < 3) {
-      printf("Input file (raw data run) required as second argument: ...$n4i [config_file] [input_file] \n");
+  if (rate_format == 1 && argc < 3) {
+      printf("Input file (raw data run) required as second argument: ...$xia4ids [config_file] [input_file] \n");
     exit(0);
   }
   
@@ -261,15 +261,15 @@ void read_config(int argc, char **argv) {
   link_type[config_coding[i][1]]                     =config_coding[i][5];
 			start[config_coding[i][0]][config_coding[i][1]]=config_coding[i][6];
 			 stop[config_coding[i][0]][config_coding[i][1]]=config_coding[i][7];
-   
+
     //AIS: Only if the Add class is used
-    if ( (root == 1 || stat == 1)) {
+    if ( (root_format == 1 || stat_format == 1)) {
       list_typedet[i] = config_coding[i][1];
     }
-    
+	
   }
   
-  if (dettypes == 0 || modules == 0 || dettypes > MAX_NUM_MOD || modules > MAX_NUM_MOD) {
+  if (dettypes == 0 || modules == 0 || dettypes > 30 || modules > 10) {
     printf("ERROR: In configuration file '%s'. Dettypes=%d, Modules=%d\n", argv[1], dettypes, modules);
     exit(0);
   }
@@ -306,7 +306,7 @@ void read_config(int argc, char **argv) {
     }
   
   
-  if (rate == 0) {                       //Normal mode
+  if (rate_format == 0) {                       //Normal mode
   printf("Start with run number:\t");
   // scanf("%d", &runstart);
   std::cin >> runstart;
@@ -331,7 +331,9 @@ void read_config(int argc, char **argv) {
   //}
   
   fclose(input_file);
-
+    
+    
+    return;
 
 }
 

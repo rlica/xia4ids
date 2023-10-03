@@ -8,17 +8,16 @@
 
 #include "XiaListModeDataMask.h"
 
-using namespace std;
 using namespace DataProcessing;
 
 FIRMWARE XiaListModeDataMask::ConvertStringToFirmware(const std::string &type) {
     FIRMWARE firmware = UNKNOWN;
     unsigned int firmwareNumber = 0;
-    stringstream msg;
+    std::stringstream msg;
 
     //First convert the string into a number
     if (type.find("R") == 0 || type.find("r") == 0) {
-        string tmp(type.begin() + 1, type.end());
+        std::string tmp(type.begin() + 1, type.end());
         firmwareNumber = (unsigned int)atoi(tmp.c_str());
     } else
         firmwareNumber = (unsigned int)atoi(type.c_str());
@@ -43,18 +42,18 @@ FIRMWARE XiaListModeDataMask::ConvertStringToFirmware(const std::string &type) {
         firmware = R34688;
     else {
         msg << "XiaListModeDataMask::ConvertStringToFirmware : "
-            << "Unrecognized firmware option - " << type << endl;
-        throw invalid_argument(msg.str());
+            << "Unrecognized firmware option - " << type << std::endl;
+        throw std::invalid_argument(msg.str());
     }
     return firmware;
 }
 
 ///The CFD Fractional Time always starts on bit 16 of Word 2. The range of
 /// this value changes.
-pair<unsigned int, unsigned int>
+std::pair<unsigned int, unsigned int>
 XiaListModeDataMask::GetCfdFractionalTimeMask() const {
     if (firmware_ == UNKNOWN || frequency_ == 0)
-        throw invalid_argument(BadMaskErrorMessage("GetCfdFractionalTimeMask"));
+        throw std::invalid_argument(BadMaskErrorMessage("GetCfdFractionalTimeMask"));
     unsigned int mask = 0;
     if (frequency_ == 100) {
         switch (firmware_) {
@@ -107,13 +106,13 @@ XiaListModeDataMask::GetCfdFractionalTimeMask() const {
                 break;
         }
     }
-    return make_pair(mask, 16);
+    return std::make_pair(mask, 16);
 }
 
 std::pair<unsigned int, unsigned int> XiaListModeDataMask::GetEventLengthMask()
     const {
     if (firmware_ == UNKNOWN)
-        throw invalid_argument(BadMaskErrorMessage("GetEventLengthMask"));
+        throw std::invalid_argument(BadMaskErrorMessage("GetEventLengthMask"));
     unsigned int mask = 0;
     unsigned int bit = 0;
     switch (firmware_) {
@@ -138,13 +137,13 @@ std::pair<unsigned int, unsigned int> XiaListModeDataMask::GetEventLengthMask()
         default:
             break;
     }
-    return make_pair(mask, bit);
+    return std::make_pair(mask, bit);
 }
 
-pair<unsigned int, unsigned int>
+std::pair<unsigned int, unsigned int>
 XiaListModeDataMask::GetCfdForcedTriggerBitMask() const {
     if (firmware_ == UNKNOWN || frequency_ == 0)
-        throw invalid_argument(BadMaskErrorMessage("GetCfdForcedTriggerBitMask"));
+        throw std::invalid_argument(BadMaskErrorMessage("GetCfdForcedTriggerBitMask"));
     unsigned int mask = 0;
     unsigned int bit = 0;
     if (frequency_ == 100) {
@@ -174,13 +173,13 @@ XiaListModeDataMask::GetCfdForcedTriggerBitMask() const {
                 break;
         }
     }
-    return make_pair(mask, bit);
+    return std::make_pair(mask, bit);
 }
 
-pair<unsigned int, unsigned int>
+std::pair<unsigned int, unsigned int>
 XiaListModeDataMask::GetCfdTriggerSourceMask() const {
     if (firmware_ == UNKNOWN || frequency_ == 0)
-        throw invalid_argument(BadMaskErrorMessage("GetCfdTriggerSourceMask"));
+        throw std::invalid_argument(BadMaskErrorMessage("GetCfdTriggerSourceMask"));
     unsigned int mask = 0;
     unsigned int bit = 0;
     if (frequency_ == 250) {
@@ -219,15 +218,15 @@ XiaListModeDataMask::GetCfdTriggerSourceMask() const {
                 break;
         }
     }
-    return make_pair(mask, bit);
+    return std::make_pair(mask, bit);
 }
 
 /// The energy always starts out on Bit 0 of Word 3 so we do not need to
 /// define a variable for the bit.
-pair<unsigned int, unsigned int> XiaListModeDataMask::GetEventEnergyMask()
+std::pair<unsigned int, unsigned int> XiaListModeDataMask::GetEventEnergyMask()
     const {
     if (firmware_ == UNKNOWN || frequency_ == 0)
-        throw invalid_argument(BadMaskErrorMessage("GetEventEnergyMask"));
+        throw std::invalid_argument(BadMaskErrorMessage("GetEventEnergyMask"));
     unsigned int mask = 0;
     switch (firmware_) {
         case R29432:
@@ -246,15 +245,15 @@ pair<unsigned int, unsigned int> XiaListModeDataMask::GetEventEnergyMask()
         default:
             break;
     }
-    return make_pair(mask, 0);
+    return std::make_pair(mask, 0);
 }
 
 //The Trace-out-of-range flag moves around on us. For most revisions it on
 // bit 15 of Word 3, but for the most recent firmware its been moved to bit 31.
-pair<unsigned int, unsigned int>
+std::pair<unsigned int, unsigned int>
 XiaListModeDataMask::GetTraceOutOfRangeFlagMask() const {
     if (firmware_ == UNKNOWN || frequency_ == 0)
-        throw invalid_argument(BadMaskErrorMessage("GetTraceOutOfRangeFlagMask"));
+        throw std::invalid_argument(BadMaskErrorMessage("GetTraceOutOfRangeFlagMask"));
 
     unsigned int mask = 0;
     unsigned int bit = 0;
@@ -280,14 +279,14 @@ XiaListModeDataMask::GetTraceOutOfRangeFlagMask() const {
         default:
             break;
     }
-    return make_pair(mask, bit);
+    return std::make_pair(mask, bit);
 }
 
 //Trace Length always starts on bit 16 of Word 3.
-pair<unsigned int, unsigned int> XiaListModeDataMask::GetTraceLengthMask()
+std::pair<unsigned int, unsigned int> XiaListModeDataMask::GetTraceLengthMask()
     const {
     if (firmware_ == UNKNOWN || frequency_ == 0)
-        throw invalid_argument(BadMaskErrorMessage("GetTraceLengthMask"));
+        throw std::invalid_argument(BadMaskErrorMessage("GetTraceLengthMask"));
     unsigned int mask = 0;
     switch (firmware_) {
         case R17562:
@@ -306,11 +305,11 @@ pair<unsigned int, unsigned int> XiaListModeDataMask::GetTraceLengthMask()
         default:
             break;
     }
-    return make_pair(mask, 16);
+    return std::make_pair(mask, 16);
 }
 
-string XiaListModeDataMask::BadMaskErrorMessage(const std::string &func) const {
-    stringstream msg;
+std::string XiaListModeDataMask::BadMaskErrorMessage(const std::string &func) const {
+    std::stringstream msg;
     msg << "XiaListModeDataMask::" << func << " : "
         << "Could not obtain a mask for firmware code " << firmware_
         << " and frequency " << frequency_ << ". Check your settings.";
@@ -319,7 +318,7 @@ string XiaListModeDataMask::BadMaskErrorMessage(const std::string &func) const {
 
 double XiaListModeDataMask::GetCfdSize() const {
     if (firmware_ == UNKNOWN || frequency_ == 0)
-        throw invalid_argument(BadMaskErrorMessage("GetCfdSize"));
+        throw std::invalid_argument(BadMaskErrorMessage("GetCfdSize"));
     if (frequency_ == 500)
         return 8192.;
 

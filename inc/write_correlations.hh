@@ -8,7 +8,7 @@ void write_correlations() {
   syncstat=fopen("sync-stat.txt", "at");
   
   
-  for (j=0; j<corr; j++) {
+  for (j=0; j<corr_format; j++) {
 	
 	    int ymax=0, xmax=0, dx=0;
 	    

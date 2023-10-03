@@ -7,10 +7,10 @@
 #define memoryuse   10000000 // Size of the data array
 #define max_num_spill     20 // Limit of number of spills to read into the data array.
 #define reject_pileup      1 // Reject events marked as pileup (set to 0 to treat them as good data)
-#define reject_out		   1 // Reject events marked as out-of-range (set to 0 to treat them as good data)
-#define DEBUG		    false // Debug information from LDFReader.cpp
-#define VERBOSE			true // Display information from Unpacker.cpp
-#define RATE_EOF_MB		  10 // Size in MBytes to read from the end of file in ratemeter mode
+#define reject_out         1 // Reject events marked as out-of-range (set to 0 to treat them as good data)
+#define DEBUG          false // Debug information from LDFReader.cpp
+#define VERBOSE         true // Display information from Unpacker.cpp
+#define RATE_EOF_MB       10 // Size in MBytes to read from the end of file in ratemeter mode
 
 ////if digitizer unit time = 10ns 
 //#define US 100
@@ -32,7 +32,6 @@
 
 typedef struct dataStruct { 
   uint64_t  time;
-  //short int energy;
   double energy;
   short int chnum;
   short int modnum;
@@ -58,7 +57,7 @@ typedef struct GaspRecHeader {
   int run_good_chunks, run_missing_chunks; // For checking run integrity
   int raw_list_size, good_list_size; // For counting all the raw/processed signals
 
- 
+
   FILE *fp_in; 
   FILE *fp_out;
   char filename[1000];
@@ -87,7 +86,7 @@ typedef struct GaspRecHeader {
   uint64_t first_ts = 0, last_ts = 0;
   int config_coding[1000][8]; //config_coding[lines][columns]
                                              
-  
+
   // ADC identifiers
   //         tmc[modnum][chnum] = det type 
   //  ntmc[type][modnum][chnum] = det number                         
@@ -100,8 +99,8 @@ typedef struct GaspRecHeader {
      stop[MAX_NUM_DET][MAX_NUM_DETTYPES],    // stop for the pair_tac   
        lmc[MAX_NUM_MOD][MAX_NUM_CHN];        // line [mod][chan] -> returns the index of the config line
 
-  int list_typedet[MAX_NUM_DET];//AIS: Only if the Add class is used
-  int corr, list, gasp, root, stat, rate, rate_root;
+  int list_typedet[MAX_NUM_DET];  //AIS: Only if the Add class is used
+  int corr_format, list_format, gasp_format, root_format, stat_format, rate_format, rate_root_format;
   int list_evSize, reference_link;
   int corr_hist[MAX_NUM_DET][RANGE];
   int firstMod[MAX_NUM_DET], secondMod[MAX_NUM_DET], firstCh[MAX_NUM_DET], secondCh[MAX_NUM_DET];
@@ -126,18 +125,14 @@ typedef struct GaspRecHeader {
 
 
 // ROOT Variables and objects
-TFile *rootfile;
-TTree *tree;
-TH1F *hStats, *h[MAX_NUM_DET], *htot[MAX_NUM_DETTYPES]; //AIS: Original def was TH1F *hStats, *h[MAX_NUM_DET], *htot[7];
+TFile* rootfile;
+TTree* tree;
+TH1F *hStats, *h[MAX_NUM_DET], *htot[MAX_NUM_DETTYPES];
 
-double E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET]; //AIS original, also you can use Double_t
-int   //E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
-      T_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
-      M_branch[MAX_NUM_DETTYPES],
-      MULT_branch;
-
-// Float_t  E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET];
-
+double E_branch[MAX_NUM_DETTYPES][MAX_NUM_DET]; //AIS, also you can use Double_t
+int    T_branch[MAX_NUM_DETTYPES][MAX_NUM_DET],
+       M_branch[MAX_NUM_DETTYPES],
+       MULT_branch;
 ULong64_t  TIME_REF_branch;
 ULong64_t  TIME_RUN_branch;    
 char root_string[MAX_NUM_DET][100];

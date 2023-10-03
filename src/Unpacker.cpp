@@ -121,7 +121,7 @@ int Unpacker::DecodeBuffer(std::vector<XiaData*>& result, unsigned int* buf, con
         bool hasExternalTimestamp = false;
 
         // Decode 4 words HEADER.
-        pair<unsigned int, unsigned int> lengths =
+        std::pair<unsigned int, unsigned int> lengths =
             DecodeWordZero(buf[0], *data, mask_);
         unsigned int headerLength = lengths.first;
         unsigned int eventLength = lengths.second;
@@ -135,7 +135,7 @@ int Unpacker::DecodeBuffer(std::vector<XiaData*>& result, unsigned int* buf, con
             data->SetEnergy(0);
 
         // Calculate time stamp.
-        pair<double, double> times = CalculateTimeInSamples(mask_, *data);
+        std::pair<double, double> times = CalculateTimeInSamples(mask_, *data);
         data->SetTimeSansCfd(times.first); // Filter ticks. For 250MHz: 8ns.
         data->SetTime(times.second); // ADC ticks. For 250MHz: 4ns.
 
@@ -143,22 +143,22 @@ int Unpacker::DecodeBuffer(std::vector<XiaData*>& result, unsigned int* buf, con
         // One last check to ensure event length matches what we think it
         // should be.
         if (traceLength / 2 + headerLength != eventLength) {
-            cerr << "Module " << modNum << " - XiaListModeDataDecoder::ReadBuffer : Event"
+            std::cerr << "XiaListModeDataDecoder::ReadBuffer : Event"
                 "length (" << eventLength << ") does not correspond to "
                 "header length (" << headerLength
                 << ") and trace length ("
-                << traceLength / 2 << ")" << endl;
-            result = vector<XiaData*>();
+                << traceLength / 2 << ")" << std::endl;
+            result = std::vector<XiaData*>();
             return -1;
         }
         else {//Advance the buffer past the header and to the trace
-            // if (debug_mode) {
-            //     cout << "Decoded 4 words of HEADER" << endl;
-            //     cerr << "Sanity check passed: trace-header-event lengths are compatible!" << endl;
-            //     cout << "Trace length = " << traceLength << endl;
-            //     cout << "Header length = " << headerLength << endl;
-            //     cout << "Event length = " << eventLength << endl;
-            // }
+//            if (debug_mode) {
+//                std::cout << "Decoded 4 words of HEADER" << std::endl;
+//                std::cerr << "Sanity check passed: trace-header-event lengths are compatible!" << std::endl;
+//                std::cout << "Trace length = " << traceLength << std::endl;
+//                std::cout << "Header length = " << headerLength << std::endl;
+//                std::cout << "Event length = " << eventLength << std::endl;
+//            }
             buf += headerLength;
         }
 
@@ -168,7 +168,7 @@ int Unpacker::DecodeBuffer(std::vector<XiaData*>& result, unsigned int* buf, con
 
         // if (read_header_mode) {
         //     if (debug_mode)
-        //         cout << "Parsing 4 words of HEADER only, task done!" << endl;
+        //         std::cout << "Parsing 4 words of HEADER only, task done!" << std::endl;
         //     return 0;
         // }
 
@@ -176,7 +176,8 @@ int Unpacker::DecodeBuffer(std::vector<XiaData*>& result, unsigned int* buf, con
 
         // else keep going to parse trace data.
     }
-
+    if (debug_mode) std::cout << "DecodeBuffer vsn = " << vsn << " done!" << std::endl;
+    
     return 0;
 }
 
@@ -201,7 +202,7 @@ std::pair<unsigned int, unsigned int> Unpacker::DecodeWordZero(const unsigned in
         break;
     }
 
-    return make_pair((word & mask.GetHeaderLengthMask().first) >> mask.GetHeaderLengthMask().second,
+    return std::make_pair((word & mask.GetHeaderLengthMask().first) >> mask.GetHeaderLengthMask().second,
         (word & mask.GetEventLengthMask().first) >> mask.GetEventLengthMask().second);
 }
 
@@ -234,22 +235,19 @@ unsigned int Unpacker::DecodeWordThree(const unsigned int& word, XiaData& data,
 }
 
 void Unpacker::InitializeMaskMap() {
-    maskMap_.insert(make_pair(0, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(1, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(2, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(3, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(4, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(5, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(6, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(7, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(8, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(9, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(10, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(11, make_pair("42950", 250)));
-    maskMap_.insert(make_pair(12, make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(0, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(1, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(2, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(3, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(4, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(5, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(6, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(7, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(8, std::make_pair("42950", 250)));
+    maskMap_.insert(std::make_pair(9, std::make_pair("42950", 250)));
 }
 
-pair<double, double> Unpacker::CalculateTimeInSamples(const XiaListModeDataMask& mask,
+std::pair<double, double> Unpacker::CalculateTimeInSamples(const XiaListModeDataMask& mask,
     const XiaData& data) {
     double filterTime = data.GetEventTimeLow() + data.GetEventTimeHigh() * pow(2., 32);
 
@@ -272,7 +270,7 @@ pair<double, double> Unpacker::CalculateTimeInSamples(const XiaListModeDataMask&
     //Moved here so we can use the multiplier to adjust the clock tick units. So GetTime() returns the ADC ticks and GetTimeSansCfd() returns Filter Ticks
     //(For 250MHZ) This way GetTime() always returns 4ns clock ticks, and GetTimeSansCfd() returns the normal 8ns ticks
     if (data.GetCfdFractionalTime() == 0 || data.GetCfdForcedTriggerBit())
-        return make_pair(filterTime, filterTime * multiplier);
+        return std::make_pair(filterTime, filterTime * multiplier);
 
-    return make_pair(filterTime, filterTime * multiplier + cfdTime);
+    return std::make_pair(filterTime, filterTime * multiplier + cfdTime);
 }

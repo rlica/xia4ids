@@ -21,16 +21,16 @@ void read_cal(int argc, char **argv) {
   FILE *cal_file;
   char line[10000];
     
-  if ( rate == 0 && (argc < 3 || !fopen(argv[2], "r")) ) {
+  if ( rate_format == 0 && (argc < 3 || !fopen(argv[2], "r")) ) {
     printf("No calibrations will be used: ...$xia4ids [config_file_name] [cal_file_name] \n");
     return;
   }
-  else if ( rate == 1 && (argc < 4 || !fopen(argv[3], "r")) ) {
+  else if ( rate_format == 1 && (argc < 4 || !fopen(argv[3], "r")) ) {
     printf("No calibrations will be used: ...$xia4ids [config_file_name] [input_file] [cal_file] \n");
     return;
   }
-  else if (rate == 0 ) cal_file = fopen(argv[2], "r");
-  else if (rate == 1 ) cal_file = fopen(argv[3], "r");
+  else if (rate_format == 0 ) cal_file = fopen(argv[2], "r");
+  else if (rate_format == 1 ) cal_file = fopen(argv[3], "r");
   
   
   while( fgets(line, 10000, cal_file) != NULL ) {

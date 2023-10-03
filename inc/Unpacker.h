@@ -7,8 +7,6 @@
 #include "XiaData.h"
 #include "XiaListModeDataMask.h"
 
-using namespace std;
-
 class Unpacker {
 public:
 	/// Default constructor.
@@ -24,9 +22,9 @@ public:
 		const XiaListModeDataMask& mask);
 	/// Method calculates time stamp from event times and mask info (frequency).
 	/// returns <incomplete time stamp (without Cfd fractional time), time stamp>
-	pair<double, double> CalculateTimeInSamples(const XiaListModeDataMask& mask,
+	std::pair<double, double> CalculateTimeInSamples(const XiaListModeDataMask& mask,
 		const XiaData& data);
 private:
-	map<unsigned int, pair<string, unsigned int> > maskMap_;///< Maps firmware/frequency to module number.
+	std::map<unsigned int, std::pair<std::string, unsigned int> > maskMap_;///< Maps firmware/frequency to module number.
 	void InitializeMaskMap();
 };

@@ -202,7 +202,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
                 std::cout << "debug: Retrieved spill of " << nBytes << " bytes (" << nBytes / 4 << " words)\n";
                 std::cout << "debug: Read up to word number " << ldf.GetFile().tellg() / 4 << " in input file\n";
             }
-            if (rate == 1) {	// Ratemeter mode will only process the last spills from a file, if the file is smaller than RATE_EOF_MB, it will read the entire file
+            if (rate_format == 1) {	// Ratemeter mode will only process the last spills from a file, if the file is smaller than RATE_EOF_MB, it will read the entire file
 				pos_index = ldf.GetFile().tellg();
 				if (int(ldf.GetFileLength()) > int (RATE_EOF_MB) * 1048576 && pos_index < int(ldf.GetFileLength()) - int (RATE_EOF_MB) * 1048576) {
 					delete[] data_;
@@ -295,20 +295,20 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
         // printf("mod = %d \t chan = %d \t time = %lf \t %lf \n", decodedEvent->GetModuleNumber(), decodedEvent->GetChannelNumber(), decodedEvent->GetTime(), decodedEvent->GetCfdFractionalTime());
         
         //Filling ROOT Histogram
-		if ( (root == 1 || stat == 1) && corr == 0 ) {
-			int line = lmc[DataArray[iData].modnum][DataArray[iData].chnum];
-			int det = tmc[DataArray[iData].modnum][DataArray[iData].chnum];
-      if (DataArray[iData].energy > 0){
-        hStats->AddBinContent(line, 1);
-        h[line]->Fill(DataArray[iData].energy);
-        htot[det]->Fill(DataArray[iData].energy);  //AIS: this line can be moved just before when the root file is seved.
-      }
+		if (root_format == 1 && corr_format == 0) {
+            int line = lmc[DataArray[iData].modnum][DataArray[iData].chnum];
+            int det  = tmc[DataArray[iData].modnum][DataArray[iData].chnum];
+            if (DataArray[iData].energy > 0){
+                hStats->AddBinContent(line, 1);
+                h[line]->Fill(DataArray[iData].energy);
+                htot[det]->Fill(DataArray[iData].energy);
+          }
 		}
 		
 		//In correlation mode, we need to delay the stop (stop = secondCh,secondMod)
 		//The start is always the same reference and should not be used as stop
-		if (corr > 0)
-			for (j=0; j<corr; j++)
+		if (corr_format > 0)
+			for (j=0; j<corr_format; j++)
 				if (DataArray[iData].chnum == secondCh[j] && DataArray[iData].modnum == secondMod[j])
 					DataArray[iData].time += CORR_DELAY;
 					
@@ -320,7 +320,7 @@ int read_ldf(LDF_file& ldf, DATA_buffer& data, int& pos_index) {
     
     //Cleaning up
     for (int i = 0; i < decodedList_.size(); i++)
-		delete decodedList_[i];
+      delete decodedList_[i];
     
         
     ldf.GetFile().close();

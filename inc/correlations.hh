@@ -7,22 +7,23 @@
 void correlations() {
 	
   
-  for (j=0; j<corr; j++) {
+  for (j=0; j<corr_format; j++) {
 
 		k=0, m=0;
 		i=1;
+        int energy_overflow = 60000;
 		while (k<iData) {
 			l=1;
 			while ( DataArray[k].chnum == firstCh[j] && 
 			        DataArray[k].modnum == firstMod[j] && 
 			        k+l<iData && 
 			        DataArray[k].energy > 0 && 
-			        DataArray[k].energy < 65536) {
+			        DataArray[k].energy < energy_overflow) {
 				 
 				if (DataArray[k+l].chnum  == secondCh[j] && 
 				    DataArray[k+l].modnum == secondMod[j] && 
 				    DataArray[k+l].energy > 0 && 
-				    DataArray[k+l].energy < 65536 && 
+				    DataArray[k+l].energy < energy_overflow && 
 				   (DataArray[k+l].time - DataArray[k].time) < RANGE  ) {
 				  
 					corr_hist[j][(DataArray[k+l].time - DataArray[k].time)]++;
@@ -42,7 +43,7 @@ void correlations() {
 		
 		
 	printf("-------------------\n");
-	for (j=0; j<corr; j++) {
+	for (j=0; j<corr_format; j++) {
 	
 		
 	int ymax=0, xmax=0, dx=0;

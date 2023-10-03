@@ -1,7 +1,7 @@
 # xia4ids
  XIA DGF Pixie-16 .ldf data file converter into ROOT and GASPware format for IDS (The IDS Collaboration https://isolde-ids.web.cern.ch/ ) 
 
-Current version: Jakku (May 2023)
+Current version: Jakku (October 2023)
 
 Parts of this code were modified from Pixie Acquisition and Analysis Software Suite (PAASS) https://github.com/pixie16/paass, which is licensed under the GNU GPL v. 3.0. In particular, some classes are modified and adapted from PAASS of branch 'dev' at https://github.com/pixie16/paass/tree/dev/Analysis/ScanLibraries.
 
@@ -118,10 +118,23 @@ The timestamp difference entry will appear after the energy entry.
 
 #### RATE format:
 
-1. Set the input file as the second argument: `n4i [config_file] [input_file] [calibration_file]`.
+1. Set the input file as the second argument: `xia4ids [config_file] [input_file] [calibration_file]`.
 2. It will print the statistics for the last buffer in the input file. You will be asked to input the number
 of blocks you want to be read from the end of the file. 
 3. You will be asked if you want to output the results in a ROOT file (useful for real-time yield measurement).
 4. Use the `macros/xia4ids_rate.sh` script file in order to get automatically the last file in a folder.
 
 
+## Change tracking
+
+### Jakku version (October 2023) list of updates (Author: Andres Illana)
+
+We observed that in c++ architectures higher than c++11, the code crashed. Now, after some debugging, the code should work with architecture c++14 and c++17
+1. Removing "using namespace std;" in some files: /inc/Unpacker.h, ./inc/XiaListModeDataMask.h, /inc/Unpacker.cpp, and ./inc/XiaListModeDataMask.cpp
+2. Rewriting part of the xia4ids.cpp code. Moving from C to C++ standards
+3. Adding more cards to the Unpacker.cpp config
+4. Using only Double_t for the energy (root part) and removing Float_t types for Double_t type
+5. Renameing format (int) variables. Adding the word: "_format". Now they are `int corr_format, list_format, gasp_format, root_format, stat_format, rate_format, rate_root_format;`
+6. Makefile updated
+7. We create a folder, "MakeOptions", where the two ways for compiling xia4ids are saved. (Makefile and CMake). The CMakeList includes 2 scripts for assinting the user with the installation.
+8. 

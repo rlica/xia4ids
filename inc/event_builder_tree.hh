@@ -45,10 +45,9 @@ void event_builder_tree() {
   for(i=0; i<=detnum; i++)  hrt[i]=0;
  
   
-  int detcount[dettypes+1];
-  Float_t energy[dettypes+1][detnum+1];
-//  double energy[dettypes+1][detnum+1]; //AIS original, also you can use Double_t
-
+  int detcount[dettypes+1];//, energy[dettypes+1][detnum+1];
+  Double_t energy[dettypes+1][detnum+1];
+  
   
   while ( k < iData) {
     
@@ -58,7 +57,7 @@ void event_builder_tree() {
     mult=0;
     
     for(i=1; i<=dettypes; i++) {
-      for (j=1; j<=maxnum[i]; j++) energy[i][j]=0;
+      for (j=1; j<=maxnum[i]; j++) energy[i][j]=0.;
       detcount[i]=0;
     }
   
@@ -214,7 +213,7 @@ void event_builder_tree() {
             //NOTE: In ROOT numbering for leafs (index) starts from 0
 	  for(n=0; n<m; n++) {
 	    type =  tmc      [DataArray[k+n].modnum][DataArray[k+n].chnum];
-       index = ntmc[type][DataArray[k+n].modnum][DataArray[k+n].chnum];
+      index = ntmc[type][DataArray[k+n].modnum][DataArray[k+n].chnum];
             //~if (index != reftype) {
   
               //TEventArray[iEvt].E[type][index-1] = energy[type][index];
