@@ -137,4 +137,3 @@ We observed that in c++ architectures higher than c++11, the code crashed. Now, 
 5. Renameing format (int) variables. Adding the word: "_format". Now they are `int corr_format, list_format, gasp_format, root_format, stat_format, rate_format, rate_root_format;`
 6. Makefile updated
 7. We create a folder, "MakeOptions", where the two ways for compiling xia4ids are saved. (Makefile and CMake). The CMakeList includes 2 scripts for assinting the user with the installation.
-8. 
