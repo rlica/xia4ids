@@ -84,15 +84,17 @@ int main(int argc, char *argv[]) {
         // Open output file
         if (corr_format == 0) {
 
+            
+            outname = std::to_string(runnumber);
+            if(runnumber < 1000) outname.insert(0, 3 - outname.size(), '0');
+            outname = "Run" + outname;
+            
             //GASPware format
             if (gasp_format == 1) {
                 
-                //sprintf(outname, "Run%03d", runnumber);
-                if(runnumber<1000) sprintf(outname, "Run%03d", runnumber);
-                else sprintf(outname, "Run%d", runnumber);
-                fp_out = fopen(outname, "wt");
+                fp_out = fopen(outname.c_str(), "wt");
                 if (!fp_out) {
-                    fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname);
+                    fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname.c_str());
                     return 0;
                 }
             }
@@ -100,12 +102,10 @@ int main(int argc, char *argv[]) {
             //Event List format
             else if (list_format == 1) {
                 
-                sprintf(outname, "Run%03d.list", runnumber);
-                if(runnumber<1000) sprintf(outname, "Run%03d.list", runnumber);
-                else sprintf(outname, "Run%d.list", runnumber);
-                fp_out = fopen(outname, "wt");
+                outname = outname + ".list";
+                fp_out = fopen(outname.c_str(), "wt");
                 if (!fp_out) {
-                    fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname);
+                    fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname.c_str());
                     return 0;
                 }
             }
@@ -113,13 +113,10 @@ int main(int argc, char *argv[]) {
             //ROOT format
             else if (root_format == 1 || stat_format == 1) {
                 
-                //sprintf(outname, "Run%03d.root", runnumber);
-                if(runnumber<1000) sprintf(outname, "Run%03d.root", runnumber);
-                else sprintf(outname, "Run%d.root", runnumber);
-//                rootfile = TFile::Open(outname, "recreate");
-                rootfile = new TFile(outname, "recreate", "IDS data file");
+                outname = outname + ".root";
+                rootfile = new TFile(outname.c_str(), "recreate", "IDS data file");
                 if (!rootfile) {
-                    fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname);
+                    fprintf(stderr, "ERROR: Unable to create %s - %m\n", outname.c_str());
                     return 0;
                 }
                 define_root();
@@ -138,13 +135,13 @@ int main(int argc, char *argv[]) {
                 
 				if (argc < 3) { //Rate mode takes the input file as the second argument
 					printf("Config file and input file required as arguments: ...$xia4ids config_file_name input file [calibration] \n");
-					exit(0);
+                    return 0;
 				}
-				sprintf(filename, "%s", argv[2]);
+                filename = argv[2];
 				fp_in = fopen(argv[2], "rb");
 				if (!fp_in) {
-					printf("ERROR: Unable to open %s \n", filename);
-					exit(0);
+					printf("ERROR: Unable to open %s \n", filename.c_str());
+                    return 0;
 				}
 				if (runpart > 0) break;
 			}				
@@ -152,22 +149,21 @@ int main(int argc, char *argv[]) {
 			// Normal mode analysing the full file
 			if (rate_format == 0) {
                 
-				if (runpart == 0)
-                    if(runnumber<1000) sprintf(filename, "%s%03d.ldf", runname, runnumber);
-                    else sprintf(filename, "%s%03d.ldf", runname, runnumber);
-                else
-                    if(runnumber<1000) sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
-                    else sprintf(filename, "%s%03d-%d.ldf", runname, runnumber, runpart);
-				fp_in = fopen(filename, "rb");
+                filename = std::to_string(runnumber);
+                if(runnumber < 1000) filename.insert(0, 3 - filename.size(), '0');
+                filename = runname + filename;
+                if (runpart == 0) filename = filename + ".ldf";
+                else filename = filename + "-" + std::to_string(runpart) + ".ldf";
+                fp_in = fopen(filename.c_str(), "rb");
 				if (!fp_in) {
-					printf("File parsing completed: %s does not exist\n", filename);
+					printf("File parsing completed: %s does not exist\n", filename.c_str());
 					break;
 				}
 			}
 			
 			
 			//Initializing the binary file object
-			LDF_file ldf(filename);
+			LDF_file ldf(filename.c_str());
 			DATA_buffer data;
 			int ldf_pos_index = 0;
 			float progress = 0.0;
@@ -178,7 +174,7 @@ int main(int argc, char *argv[]) {
 			ldf.SetLength(ldf.GetFile().tellg());
 			ldf.GetFile().seekg(0, ldf.GetFile().beg);
 			ldf.GetFile().close();
-			printf("Filename:  %s \nFile size: %.2f MB \n", filename, float(ldf.GetFileLength())/1048576);
+			printf("Filename:  %s \nFile size: %.2f MB \n", filename.c_str(), float(ldf.GetFileLength())/1048576);
 
 
 			// Start of a reading cycle:
@@ -227,7 +223,7 @@ int main(int argc, char *argv[]) {
 					event_builder();
 					write_gasp();
 					totEvt += iEvt;
-					printf(" %3d events written to %s ", totEvt, outname);
+					printf(" %3d events written to %s ", totEvt, outname.c_str());
 					write_time(ldf_pos_index, ldf.GetFileLength());
 				}
 
@@ -236,7 +232,7 @@ int main(int argc, char *argv[]) {
 					event_builder_list();
 					write_list();
 					totEvt += iEvt;
-					printf(" %3d events written to %s ", totEvt, outname);
+					printf(" %3d events written to %s ", totEvt, outname.c_str());
 					write_time(ldf_pos_index, ldf.GetFileLength());
 				}
 
@@ -244,7 +240,7 @@ int main(int argc, char *argv[]) {
 				else if (root_format == 1 || stat_format == 1) {
 					event_builder_tree();
 					totEvt += iEvt;
-					printf(" %3d events written to %s ", totEvt, outname);
+					printf(" %3d events written to %s ", totEvt, outname.c_str());
 					write_time(ldf_pos_index, ldf.GetFileLength());
 				}
 

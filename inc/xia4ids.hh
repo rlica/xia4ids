@@ -60,9 +60,9 @@ typedef struct GaspRecHeader {
 
   FILE *fp_in; 
   FILE *fp_out;
-  char filename[1000];
-  char outname[1000];
-  char runname[1000];
+  char runname[10000];
+  std::string filename;
+  std::string outname;
   char ref_string[10], run_string[10], format_string[100], rate_root_string[1];
   unsigned long long int ref_unit, run_unit;
   int i, j, k, l, m, n, e, z,

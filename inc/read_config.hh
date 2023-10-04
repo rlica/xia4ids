@@ -4,12 +4,12 @@
 #include <iostream>
 
 
-void read_config(int argc, char **argv) {
+void read_config(int argc, char *argv[]) {
   
     
   if (argc < 2) {
       printf("Config file required as argument: ...$xia4ids [config_file_name] \n");
-    exit(0);
+      exit(0);
   }
 
   FILE *input_file;
@@ -102,17 +102,20 @@ void read_config(int argc, char **argv) {
   
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //Reading the Configuration coding
-  fscanf(input_file,"|Index\t|Type\t|Mod\t|Chan\t|Delay\t|Link\t|Start\t|Stop\t|Comment\n");
+  if (fscanf(input_file,"|Index\t|Type\t|Mod\t|Chan\t|Delay\t|Link\t|Start\t|Stop\t|Comment\n")){
+      std::cerr << "Check the config file!" << std::endl;
+      exit (0);
+  }
   //     0       1      2     3      4       5      6       7      string
   
-  int line=0, column=0;
+  int line=0, column=0, line_length = 0;
   while ( fscanf(input_file,"%d", &config_coding[line][column]) ) {
     //printf("%d\t", config_coding[line][column]);
             
     if (column<7) column++;
     else {
       
-      getline(&comment_line, &nbytes, input_file);
+      line_length = getline(&comment_line, &nbytes, input_file);
       sscanf(comment_line, "%s", comment_string[line]);
       column=0;
       line++;
