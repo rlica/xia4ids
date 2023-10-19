@@ -121,8 +121,7 @@ int Unpacker::DecodeBuffer(std::vector<XiaData*>& result, unsigned int* buf, con
         bool hasExternalTimestamp = false;
 
         // Decode 4 words HEADER.
-        std::pair<unsigned int, unsigned int> lengths =
-            DecodeWordZero(buf[0], *data, mask_);
+        std::pair<unsigned int, unsigned int> lengths = DecodeWordZero(buf[0], *data, mask_);
         unsigned int headerLength = lengths.first;
         unsigned int eventLength = lengths.second;
 

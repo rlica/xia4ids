@@ -59,8 +59,8 @@ void read_cal(int argc, char **argv) {
    
    printf("Successfull reading of calibration coefficients for %d channels.\n", count);
    
-   have_cal = 1;
-   
-   
+   have_cal = true;
+  
+   return;
 }
 

@@ -17,6 +17,10 @@ https://github.com/rlica/xia4ids
 #include <math.h>
 #include <iomanip>
 #include <random>
+#include <vector>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 #include "TFile.h"
 #include "TTree.h"
@@ -51,8 +55,8 @@ int main(int argc, char *argv[]) {
     srand(time(0));
     
     printf("\n\t\t----------------------------------");
-    printf("\n\t\t    XIA DGF Pixie-16 Converter");
-    printf("\n\t\t https://github.com/rlica/xia4ids");
+    printf("\n\t\t    XIA DGF Pixie-16 Converter    ");
+    printf("\n\t\t https://github.com/rlica/xia4ids ");
     printf("\n\t\t          Version = Jakku         ");
     printf("\n\t\t----------------------------------");
     printf("\n\n");
@@ -83,7 +87,6 @@ int main(int argc, char *argv[]) {
 
         // Open output file
         if (corr_format == 0) {
-
             
             outname = std::to_string(runnumber);
             if(runnumber < 1000) outname.insert(0, 3 - outname.size(), '0');
@@ -126,7 +129,7 @@ int main(int argc, char *argv[]) {
 
 			
 		// Cycling over run partitions (a large run will be split into several files of 2.0 Gb each -> one run partition = one file)
-		for (runpart = 0; runpart < 1000; runpart++) { 
+		for (runpart = 0; runpart < 1000; runpart++) {
            
 			start_clock = (double)clock();
                
@@ -137,7 +140,7 @@ int main(int argc, char *argv[]) {
 					printf("Config file and input file required as arguments: ...$xia4ids config_file_name input file [calibration] \n");
                     return 0;
 				}
-                filename = argv[2];
+        filename = argv[2];
 				fp_in = fopen(argv[2], "rb");
 				if (!fp_in) {
 					printf("ERROR: Unable to open %s \n", filename.c_str());
@@ -149,12 +152,12 @@ int main(int argc, char *argv[]) {
 			// Normal mode analysing the full file
 			if (rate_format == 0) {
                 
-                filename = std::to_string(runnumber);
-                if(runnumber < 1000) filename.insert(0, 3 - filename.size(), '0');
-                filename = runname + filename;
-                if (runpart == 0) filename = filename + ".ldf";
-                else filename = filename + "-" + std::to_string(runpart) + ".ldf";
-                fp_in = fopen(filename.c_str(), "rb");
+        filename = std::to_string(runnumber);
+        if(runnumber < 1000) filename.insert(0, 3 - filename.size(), '0');
+        filename = runname + filename;
+        if (runpart == 0) filename = filename + ".ldf";
+        else filename = filename + "-" + std::to_string(runpart) + ".ldf";
+        fp_in = fopen(filename.c_str(), "rb");
 				if (!fp_in) {
 					printf("File parsing completed: %s does not exist\n", filename.c_str());
 					break;

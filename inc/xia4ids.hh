@@ -32,7 +32,7 @@
 
 typedef struct dataStruct { 
   uint64_t  time;
-  double energy;
+  double    energy;
   short int chnum;
   short int modnum;
 } dataStruct;
