@@ -72,4 +72,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADER_FILES)
 
 
 clean:
-	@rm -r $(OBJ_DIR) $(BIN_DIR) -R
+	@rm -rf $(OBJ_DIR) $(BIN_DIR)
