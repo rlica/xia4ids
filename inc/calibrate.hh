@@ -4,7 +4,7 @@
 double calibrate(int module, int channel, int energy) {
 
     // If no calibration for channel, return ADC energy
-    if (!have_cal == 0 || calib[module][channel][0] == 0) return energy;
+    if (!have_cal || calib[module][channel][0] == 0) return energy;
 	  
     // Generate random number between 0 and 1, and add to ADC channel
     // to remove binning issues
