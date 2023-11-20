@@ -8,7 +8,8 @@ double calibrate(int module, int channel, int energy) {
 	  
     // Generate random number between 0 and 1, and add to ADC channel
     // to remove binning issues
-    static std::default_random_engine generator;
+    std::random_devide rmdseed;
+    std::default_random_engine generator(rmdseed());
     std::uniform_real_distribution<double> distribution(-0.5,0.5);
     double engPlusRand = energy + distribution(generator);
     
