@@ -17,7 +17,7 @@ INC_FLAGS = -I $(INC_DIR)
 # LD_FLAGS = -fsanitize=address `root-config --glibs`
 
 # Normal compile
-CC_FLAGS = $(INC_FLAGS) -g -O3 `root-config --cflags`
+CC_FLAGS = $(INC_FLAGS) -g -O3 -std=c++17 `root-config --cflags`
 LD_FLAGS = `root-config --glibs`
 
 

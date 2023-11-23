@@ -24,3 +24,13 @@ We observed that in C++ architectures higher than c++11, the code crashed. Now, 
 8. We create a folder, "MakeOptions", where the two ways for compiling xia4ids are saved. (Makefile and CMake). The CMakeList includes 2 scripts for assisting the user with the installation.
 9. Creating the CHANGELOG file for tracking all the changes.
 
+
+## Jakku version - November 2023
+
+ - _Version of the code:_ Jakku (2023)
+ - _Contributors:_            Andres Illana (UCM)
+
+### Changes
+
+1. Changing the random generator in ./inc/calibrate.hh to TRandom3 standar for better binning
+2. Makefile upadted for c++17 standards

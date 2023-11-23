@@ -27,7 +27,7 @@ https://github.com/rlica/xia4ids
 #include "TBrowser.h"
 #include "TH1.h"
 #include "TH2.h"
-#include "TRandom.h"
+#include "TRandom3.h"
 #include "TCanvas.h"
 #include "TMath.h"
 #include "TROOT.h"

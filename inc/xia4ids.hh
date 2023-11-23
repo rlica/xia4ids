@@ -140,3 +140,4 @@ char root_string[MAX_NUM_DET][100];
 char *comment_line;
 char comment_string[MAX_NUM_DET][100];
 
+TRandom3 *RandValue = new TRandom3(0);
