@@ -38,7 +38,7 @@ void read_cal(int argc, char **argv) {
       // Parse the line
       status = sscanf(line, "%d%d%lf%lf%lf%lf", &module, &channel, &cal[0], &cal[1], &cal[2], &cal[3]);
       
-      if (status != MAX_CAL+1 ) {
+      if (status != MAX_CAL+2 ) {
 		  printf("Cal file read error: module %d channel %d \n", module, channel);
 		  continue;
 	  }

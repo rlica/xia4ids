@@ -3,7 +3,7 @@
 #define MAX_NUM_DETTYPES  20  //AIS: Orig value was 60
 #define MAX_NUM_CHN       17
 #define MAX_NUM_MOD       15
-#define MAX_CAL            5
+#define MAX_CAL            4
 #define memoryuse   10000000 // Size of the data array
 #define max_num_spill     20 // Limit of number of spills to read into the data array.
 #define reject_pileup      1 // Reject events marked as pileup (set to 0 to treat them as good data)

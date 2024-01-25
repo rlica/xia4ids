@@ -2,9 +2,13 @@
 //If the signal has no calibration defined, the energy will be the same
 
 double calibrate(int module, int channel, int energy) {
-
+  
+    // If ADC energy is 0, return 0
+    if (energy < 1) return 0.;
     // If no calibration for channel, return ADC energy
     if (!have_cal || calib[module][channel][0] == 0) return energy;
+    // If the user wants to disable a channel (slope = 999.), return energy = 0
+    if (have_cal && calib[module][channel][1] == 999) return 0.; // Best way to remove det from data that are defined on the config file. (To avoid Jaime's and Marcos' effect)
 	  
     // Generate random number between 0 and 1, and add to ADC channel
     // to remove binning issues
