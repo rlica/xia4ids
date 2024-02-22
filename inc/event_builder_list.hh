@@ -74,13 +74,12 @@ void event_builder_list() {
     //finding clusters of data
     //m = number of signals inside the cluster
     while ( m <= detnum && k+m < iData-1 && DataArray[k+m].time - DataArray[k].time < timegate ) {
-	     m++;
-    
       
       //if ref is inside an event we need to update the information about it
 	    if (reftype !=0 && tmc[DataArray[k+m].modnum][DataArray[k+m].chnum] == reftype) {
 	      tref = DataArray[k+m].time;
           }
+      m++;
     
     }
     

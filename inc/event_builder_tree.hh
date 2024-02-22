@@ -88,8 +88,6 @@ void event_builder_tree() {
     //finding clusters of data
     //m = number of signals inside the cluster
     while ( m <= detnum && k+m < iData && DataArray[k+m].time - DataArray[k].time < timegate ) {
-	     m++;
-    
       
       //if ref is inside an event we need to update the information about it
 	    if (reftype !=0 && tmc[DataArray[k+m].modnum][DataArray[k+m].chnum] == reftype) {
@@ -102,8 +100,8 @@ void event_builder_tree() {
                 //~ next_tref = (DataArray[l].time - tref);  
               //~ else next_tref = 0; 
           }
-         
-    
+      
+      m++;
     }
     
     
