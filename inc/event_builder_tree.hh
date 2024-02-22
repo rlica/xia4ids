@@ -99,7 +99,7 @@ void event_builder_tree() {
               //~ if (tmc[DataArray[l].modnum][DataArray[l].chnum] == reftype) 
                 //~ next_tref = (DataArray[l].time - tref);  
               //~ else next_tref = 0; 
-          }
+      }
       
       m++;
     }
